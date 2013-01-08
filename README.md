@@ -9,4 +9,5 @@ raspberry-pipeline $ sudo python webserver.py
 raspberry-pipeline $ python lights-controller.py 
 
 http://localhost:666/index.html?key=value
+http://localhost:666/index.html?key=value&debug=true
 ```
