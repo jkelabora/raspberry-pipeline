@@ -10,7 +10,7 @@ def determine_message(query):
     debug_mode = True if re.search('debug', query) else False
 
     message = query
-    
+
     message = message + 'DEBUG' if debug_mode else message
     return message
 
@@ -39,7 +39,7 @@ class LightSwitch(BaseHTTPRequestHandler):
 
 def main():
     try:
-        port = 666
+        port = 3142
         server = HTTPServer(('', port), LightSwitch)
         print 'started httpserver on port %d...' % port
         server.serve_forever()
