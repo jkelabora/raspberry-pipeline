@@ -1,17 +1,23 @@
 from urlparse import urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import beanstalkc
+import re
 
 def determine_message(query):
+
+    default_led_count = 32
+    default_brightness = 1.0 # 0.0 -> 1.0
+    debug_mode = True if re.search('debug', query) else False
+
     message = query
-    if query.find('debug') > 0:
-        message += ' DEBUG'
+    
+    message = message + 'DEBUG' if debug_mode else message
     return message
 
 class LightSwitch(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        if self.path.find(".html") > 0:
+        if  re.search('.html', self.path):
 
             parsed = urlparse(self.path)
             print parsed
