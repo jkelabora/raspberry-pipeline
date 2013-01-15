@@ -32,15 +32,15 @@ class LightSwitch(BaseHTTPRequestHandler):
     def do_GET(self):
         if re.search('.html', self.path):
 
-            parsed = urlparse(self.path).query
+            parsed = urlparse(self.path).query.lower()
             message = determine_message(parsed)
 
-            if re.search('debug', parsed) == False:
+            if re.search('debug', parsed):
+                print "DEBUG: message posted: 'content' => '{0}'".format(message)
+            else:
                 beanstalk = beanstalkc.Connection(host='localhost', port=14711, parse_yaml=False)
                 msg_id = beanstalk.put(message)
                 print "INFO: message posted: 'id':'content' => '{0}':'{1}'".format(msg_id, message)
-            else:
-                print "DEBUG: message posted: 'content' => '{0}'".format(message)
 
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
