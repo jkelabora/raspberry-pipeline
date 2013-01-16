@@ -16,6 +16,7 @@ def value_for(key, source):
 
 def determine_message(query):
     # all_off=true -> ignore all other params   
+    # ============
     if value_for('all_off', query): 
         return 'all_off'
     else:
@@ -25,18 +26,41 @@ def determine_message(query):
         segment_count = value_for('segment_count', query) if value_for('segment_count', query) else default_segment_count
         led_start_offset = default_led_count % segment_count
 
+        # ============
         # start_build=true -> respect defaults, ignore other params
         if value_for('start_build', query):
             start_led_index = led_start_offset
             end_led_index = default_led_count
             return 'start_build:{0}:{1}:{2}'.format(start_led_index, end_led_index, default_brightness)
         
-        # seg_(1 < n < segment_count)=(red,green,blue,white)[_pulse]
-        # segment_width = default_led_count / segment_count
+        # ============
+        # http://localhost:3142/index.html?update=true&seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=blue_pulse&seg_5=white
+        if value_for('update', query):
+
+            # return a message with segment directives ordered by segment index if possible
+            segment_width = default_led_count / segment_count
+            start_led_index = led_start_offset
+            message = "update:{0}:{1}:{2}:{3}".format(start_led_index, segment_count, segment_width, default_brightness)
+            for i in range(segment_count):
+                led_idx = i + 1
+                led_directive = value_for('seg_{0}'.format(led_idx), query)
+                if led_directive == None:
+                    print "with {0} segments, expected a 'seg_{1}=' key".format(segment_count, led_idx)
+                    return None
+                else:
+                    colour = re.search(r"\b(green|blue|white|red)(_pulse)?\b", led_directive)
+                    if colour:
+                        print 'setting seg_{0} to {1}'.format(led_idx, colour.group())
+                        message += ":{0}".format(colour.group())
+                    else:
+                        print "valid colour values are green|blue|white|red followed by an optional '_pulse' suffix, found {0} for seg_{1}".format(led_directive, led_idx)
+                        return None
+            return message
         return None
 
 class LightSwitch(BaseHTTPRequestHandler):
 
+    # todo: split this out into more entry points
     def do_GET(self):
         if re.search('.html', self.path):
 
@@ -50,7 +74,7 @@ class LightSwitch(BaseHTTPRequestHandler):
                 msg_id = beanstalk.put(message)
                 print "INFO: message posted: 'id':'content' => '{0}':'{1}'".format(msg_id, message)
             else:
-                self.send(400, 'Bad request')
+                self.send_error(400, 'Bad request')
                 return
 
             self.send_response(200)
