@@ -34,7 +34,7 @@ def issue_update(tokens):
         seg_color = colors[tokens[i + 5]]
         seg_start_idx = i * segment_width + start_idx
         seg_end_idx = seg_start_idx + segment_width - 1
-        print "for segment {0}, sending seg_color:{1}, seg_start_idx:{2}, seg_end_idx:{3}".format(i + 1, seg_color, seg_start_idx, seg_end_idx)
+        print "for segment {0}, sending seg_color:{1}, seg_start_idx:{2}, seg_end_idx:{3}".format(i + 1, tokens[i + 5], seg_start_idx, seg_end_idx)
         # Fill the strand (or a subset) with a single Color
         # def fill(self, color, start=0, end=0):
         led.fill(seg_color, seg_start_idx, seg_end_idx)
