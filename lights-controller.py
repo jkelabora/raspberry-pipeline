@@ -23,28 +23,32 @@ def issue_all_off():
 
 
 # update:2:5:6:1.0:green:white:red:blue:red
-# update:2:5:6:1.0:green:white_pulse:red:blue_pulse:red <<--ignore for now
+# update:2:5:6:1.0:green:white_pulse:red:blue_pulse:red <<--ignore _pulse elements for now
 def issue_update(tokens):
-    led.setMasterBrightness(tokens[4])
-    start_idx = tokens[1]
-    segment_width = tokens[3]
+    led.setMasterBrightness(int(tokens[4]))
+    start_idx = int(tokens[1])
+    segment_count = int(tokens[2])
+    segment_width = int(tokens[3])
 
-    # green|blue|white|red)(_pulse)
-    for i in range(tokens[2]):
+    for i in range(segment_count):
+        seg_color = colors[tokens[i + 5]]
+        seg_start_idx = i * segment_width + start_idx
+        seg_end_idx = seg_start_idx + segment_width - 1
+        print "for segment {0}, sending seg_color:{1}, seg_start_idx:{2}, seg_end_idx:{3}".format(i + 1, seg_color, seg_start_idx, seg_end_idx)
         # Fill the strand (or a subset) with a single Color
         # def fill(self, color, start=0, end=0):
-        led.fill('... colors[i + 5], start_idx, default_led_count ...')
+        led.fill(seg_color, seg_start_idx, seg_end_idx)
         led.update()
 
 
 # start_build:2:32:1.0
 def issue_start_build(start_idx=0, led_count=32, brightness=1.0):
     led.setMasterBrightness(brightness)
-    led.anim_larson_rainbow(2, 0.5)
-    led.update()
 
     #larson scanner (i.e. Cylon Eye or K.I.T.T.) but Rainbow
     # def anim_larson_rainbow(self, tail=2, fade=0.75, start=0, end=0):
+    led.anim_larson_rainbow(2, 0.5)
+    led.update()
 
 
 def issue_current_directive(directive):
