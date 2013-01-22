@@ -12,6 +12,7 @@ python lights-controller.py &
 
 http://localhost:3142/start_build.html
 
+http://localhost:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_4=blue&seg_5=red
 http://localhost:3142/update.html?seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=blue_pulse&seg_5=red
 http://localhost:3142/update.html?seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=blue_pulse&seg_5=red&debug=true
 

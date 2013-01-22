@@ -25,7 +25,7 @@ def issue_all_off():
 # update:2:5:6:1.0:green:white:red:blue:red
 # update:2:5:6:1.0:green:white_pulse:red:blue_pulse:red <<--ignore _pulse elements for now
 def issue_update(tokens):
-    led.setMasterBrightness(int(tokens[4]))
+    led.setMasterBrightness(float(tokens[4]))
     start_idx = int(tokens[1])
     segment_count = int(tokens[2])
     segment_width = int(tokens[3])
@@ -57,7 +57,7 @@ def issue_current_directive(directive):
         issue_all_off()
 
     elif tokens[0] == 'start_build':
-        issue_start_build(tokens[1], tokens[2], tokens[3])
+        issue_start_build(tokens[1], tokens[2], float(tokens[3]))
 
     elif tokens[0] == 'update':
         issue_update(tokens)
