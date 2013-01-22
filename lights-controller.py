@@ -19,7 +19,7 @@ led = LEDStrip(default_led_count)
 
 
 def issue_all_off():
-    led.fillOff()
+    led.all_off()
 
 
 # update:2:5:6:1.0:green:white:red:blue:red
