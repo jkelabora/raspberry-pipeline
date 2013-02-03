@@ -19,13 +19,14 @@ sudo python lights-controller.py &
 (fg ^C to kill)
 
 
-http://localhost:3142/start_build.html
-http://localhost:3142/all_off.html
+http://raspberrypi.local:3142/start_build.html
+http://raspberrypi.local:3142/all_off.html
 
-http://localhost:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_4=blue&seg_5=red
-http://localhost:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_4=blue&seg_5=red&debug=true
+http://raspberrypi.local:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_4=blue&seg_5=red
+http://raspberrypi.local:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_4=blue&seg_5=red&debug=true
 
-todo (one optional 'pulse' segment per command):
-http://localhost:3142/update.html?seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=bluee&seg_5=red
+
+to finish (one optional 'pulse' segment per command):
+http://raspberrypi.local:3142/update.html?seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=bluee&seg_5=red
 
 ```
