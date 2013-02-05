@@ -13,8 +13,8 @@ make
 cd beanstalkd-1.8/
 ./beanstalkd -l 127.0.0.1 -p 14711 &
 cd ../raspberry-pipeline/
-sudo python webserver.py &
-sudo python lights-controller.py &
+sudo python queue_writers/beanstalk_webserver.py &
+sudo python lights_controller.py &
 
 (fg ^C to kill)
 

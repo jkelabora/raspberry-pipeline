@@ -1,9 +1,9 @@
 import time
 from time import sleep
 import re
-import beanstalkc
 from LPD8806 import *
 
+import beanstalkc
 beanstalk = beanstalkc.Connection(host='localhost', port=14711, parse_yaml=False)
 
 colors = {
