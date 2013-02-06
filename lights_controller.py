@@ -3,8 +3,11 @@ from time import sleep
 import re
 from LPD8806 import *
 
-import beanstalkc
-beanstalk = beanstalkc.Connection(host='localhost', port=14711, parse_yaml=False)
+import boto.sqs
+# conn = boto.sqs.connect_to_region("us-east-1", aws_access_key_id='<aws access key'>, aws_secret_access_key='<aws secret key>')
+conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
+q = conn.get_queue('raspberry-pipeline')
+
 
 colors = {
     'red' : Color(255, 0, 0),
@@ -75,11 +78,11 @@ def main():
             if now != last_second:
                 last_second = now
                 print 'polling..'
-                job = beanstalk.reserve(timeout=0)
+                job = q.read()
                 if job is not None:
-                    print "job found with content: {0}".format(job.body)
-                    directive = job.body
-                    job.delete()
+                    print "job found with content: {0}".format(job.get_body())
+                    directive = job.get_body()
+                    q.delete_message(job)
 
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
 
