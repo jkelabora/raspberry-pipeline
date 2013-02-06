@@ -10,6 +10,10 @@ tar -xvzf beanstalkd-1.8.tar.gz
 beanstalkd-1.8/
 make
 
+$ git clone git://github.com/boto/boto.git
+$ cd boto
+$ sudo python setup.py install
+
 cd beanstalkd-1.8/
 ./beanstalkd -l 127.0.0.1 -p 14711 &
 cd ../raspberry-pipeline/

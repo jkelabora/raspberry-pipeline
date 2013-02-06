@@ -4,10 +4,13 @@ import re
 from LPD8806 import *
 
 import boto.sqs
-# conn = boto.sqs.connect_to_region("us-east-1", aws_access_key_id='<aws access key'>, aws_secret_access_key='<aws secret key>')
+# conn = boto.sqs.connect_to_region("ap-southeast-2", aws_access_key_id='aws access key', aws_secret_access_key='aws secret key')
 conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
 q = conn.get_queue('raspberry-pipeline')
 
+#import os
+#print os.environ['AWS_ACCESS_KEY_ID']
+#print os.environ['AWS_SECRET_ACCESS_KEY']
 
 colors = {
     'red' : Color(255, 0, 0),
