@@ -33,4 +33,9 @@ http://raspberrypi.local:3142/update.html?seg_1=green&seg_2=white&seg_3=red&seg_
 to finish (one optional 'pulse' segment per command):
 http://raspberrypi.local:3142/update.html?seg_1=green&seg_2=white_pulse&seg_3=red&seg_4=bluee&seg_5=red
 
+
+cd aws-java-sdk-1.3.30/samples/AmazonSimpleQueueService
+echo "accessKey=[--INSERT--]" >> AwsCredentials.properties && echo "secretKey=[--INSERT--]" >> AwsCredentials.properties
+ant -Darg0="ap-southeast-2" -Darg1="raspberry-pipeline" -Darg2="start_build:2:32:1.0" run
+
 ```
