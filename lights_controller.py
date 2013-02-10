@@ -28,6 +28,20 @@ def issue_all_off():
     led.all_off()
 
 
+# update_segment:2:6:3:1.0:green
+def issue_update_segment(tokens):
+    led.setMasterBrightness(float(tokens[4]))
+    start_idx = int(tokens[1])
+    segment_width = int(tokens[2])
+    seg_start_idx = (int(tokens[3]) - 1) * segment_width + start_idx
+    seg_end_idx = seg_start_idx + segment_width - 1
+    seg_color = colors[tokens[5]]
+    # Fill the strand (or a subset) with a single Color
+    # def fill(self, color, start=0, end=0):
+    led.fill(seg_color, seg_start_idx, seg_end_idx)
+    led.update()
+
+
 # update:2:5:6:1.0:green:white:red:blue:red
 # update:2:5:6:1.0:green:white_pulse:red:blue_pulse:red <<--ignore _pulse elements for now
 def issue_update(tokens):
@@ -40,20 +54,19 @@ def issue_update(tokens):
         seg_color = colors[tokens[i + 5]]
         seg_start_idx = i * segment_width + start_idx
         seg_end_idx = seg_start_idx + segment_width - 1
-        print "for segment {0}, sending seg_color:{1}, seg_start_idx:{2}, seg_end_idx:{3}".format(i + 1, tokens[i + 5], seg_start_idx, seg_end_idx)
         # Fill the strand (or a subset) with a single Color
         # def fill(self, color, start=0, end=0):
         led.fill(seg_color, seg_start_idx, seg_end_idx)
         led.update()
 
 
-# start_build:2:32:1.0
-def issue_start_build(start_idx=0, led_count=32, brightness=1.0):
+# start_build:2:0.5:0:0:1.0
+def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
     led.setMasterBrightness(brightness)
 
     #larson scanner (i.e. Cylon Eye or K.I.T.T.) but Rainbow
     # def anim_larson_rainbow(self, tail=2, fade=0.75, start=0, end=0):
-    led.anim_larson_rainbow(2, 0.5)
+    led.anim_larson_rainbow(tail, fade, start_idx, end_idx)
     led.update()
 
 
@@ -63,10 +76,13 @@ def issue_current_directive(directive):
         issue_all_off()
 
     elif tokens[0] == 'start_build':
-        issue_start_build(tokens[1], tokens[2], float(tokens[3]))
+        issue_start_build(tokens[1], float(tokens[2]), tokens[3], tokens[4], float(tokens[5]))
 
     elif tokens[0] == 'update':
         issue_update(tokens)
+
+    elif tokens[0] == 'update_segment':
+        issue_update_segment(tokens)
 
 
 def main():
