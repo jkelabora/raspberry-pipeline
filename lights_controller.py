@@ -76,7 +76,7 @@ def issue_current_directive(directive):
         issue_all_off()
 
     elif tokens[0] == 'start_build':
-        issue_start_build(tokens[1], float(tokens[2]), tokens[3], tokens[4], float(tokens[5]))
+        issue_start_build(int(tokens[1]), float(tokens[2]), int(tokens[3]), int(tokens[4]), float(tokens[5]))
 
     elif tokens[0] == 'update':
         issue_update(tokens)
