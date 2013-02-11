@@ -8,6 +8,9 @@ import boto.sqs
 conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
 q = conn.get_queue('raspberry-pipeline')
 
+from boto.sqs.message import RawMessage
+q.set_message_class(RawMessage)
+
 #import os
 #print os.environ['AWS_ACCESS_KEY_ID']
 #print os.environ['AWS_SECRET_ACCESS_KEY']
