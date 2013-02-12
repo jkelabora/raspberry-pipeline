@@ -32,20 +32,18 @@ jenkins_segments = {
     'Deploy to QA' : 4
 }
 jenkins_colors = {
-    'FAILURE' : colors['red'],
-    'SUCCESS' : colors['green']
+    'FAILURE' : 'red',
+    'SUCCESS' : 'green'
 }
 jenkins_regex = r"Build ([A-Z]+): (.*) #"
 
 def jenkins_color(message):
-    subject = message['Subject']
-    match = re.search(jenkins_regex, subject)
-    return jenkins_colors[colors[match.group(1)]]
+    match = re.search(jenkins_regex, message)
+    return jenkins_colors[match.group(1)]
 
 def jenkins_segment(message):
-    subject = message['Subject']
-    match = re.search(jenkins_regex, subject)
-    return jenkins_colors[match.group(1)]
+    match = re.search(jenkins_regex, message)
+    return jenkins_segments[match.group(2)]
 #---------
 
 
@@ -102,11 +100,17 @@ def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
 
 #---------
 def issue_current_jenkins_directive(directive):
+
+    if directive == 'all_off':
+        issue_all_off()
+        return
+
     color = jenkins_color(directive)
     segment_number = jenkins_segment(directive)
 
     # update_segment:2:6:3:1.0:green
     tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
+    print tokens
     issue_update_segment(tokens)
 #---------
 
@@ -132,7 +136,6 @@ def main():
         job = None
         last_second = time.localtime().tm_sec
         while True:
-            # issue_current_directive(directive)
             issue_current_jenkins_directive(directive)
 
             now = time.localtime().tm_sec
@@ -141,9 +144,8 @@ def main():
                 print 'polling..'
                 job = q.read()
                 if job is not None:
-                    message = job.get_body()
-                    print "job found with content: {0}".format(message)
-                    directive = message
+                    print "job found with content: {0}".format(job.get_body())
+                    directive = job.get_body()
                     q.delete_message(job)
 
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
