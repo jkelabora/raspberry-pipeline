@@ -45,7 +45,7 @@ def jenkins_color(message):
 def jenkins_segment(message):
     subject = message['Subject']
     match = re.search(jenkins_regex, subject)
-    return jenkins_colors[match.group(1)]]
+    return jenkins_colors[match.group(1)]
 #---------
 
 
