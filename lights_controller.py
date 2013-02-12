@@ -22,6 +22,33 @@ colors = {
     'white' : Color(255, 255, 255),
 }
 
+
+#---------
+jenkins_segments = {
+    'Prepare' : 0,
+    'Unit Tests' : 1,
+    'Integration Tests' : 2,
+    'Deploy Test' : 3,
+    'Deploy to QA' : 4
+}
+jenkins_colors = {
+    'FAILURE' : colors['red'],
+    'SUCCESS' : colors['green']
+}
+jenkins_regex = r"Build ([A-Z]+): (.*) #"
+
+def jenkins_color(message):
+    subject = message['Subject']
+    match = re.search(jenkins_regex, subject)
+    return jenkins_colors[colors[match.group(1)]]
+
+def jenkins_segment(message):
+    subject = message['Subject']
+    match = re.search(jenkins_regex, subject)
+    return jenkins_colors[match.group(1)]]
+#---------
+
+
 # setup long-lived stateful LEDStrip instance
 default_led_count = 32
 led = LEDStrip(default_led_count)
@@ -73,6 +100,17 @@ def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
     led.update()
 
 
+#---------
+def issue_current_jenkins_directive(directive):
+    color = jenkins_color(directive)
+    segment_number = jenkins_segment(directive)
+
+    # update_segment:2:6:3:1.0:green
+    tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
+    issue_update_segment(tokens)
+#---------
+
+
 def issue_current_directive(directive):
     tokens = directive.split(':')
     if tokens[0] == 'all_off':
@@ -94,7 +132,8 @@ def main():
         job = None
         last_second = time.localtime().tm_sec
         while True:
-            issue_current_directive(directive)
+            # issue_current_directive(directive)
+            issue_current_jenkins_directive(directive)
 
             now = time.localtime().tm_sec
             if now != last_second:
@@ -102,8 +141,9 @@ def main():
                 print 'polling..'
                 job = q.read()
                 if job is not None:
-                    print "job found with content: {0}".format(job.get_body())
-                    directive = job.get_body()
+                    message = job.get_body()
+                    print "job found with content: {0}".format(message)
+                    directive = message
                     q.delete_message(job)
 
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
