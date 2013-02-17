@@ -33,7 +33,8 @@ jenkins_segments = {
 }
 jenkins_colors = {
     'FAILURE' : 'red',
-    'SUCCESS' : 'green'
+    'SUCCESS' : 'green',
+    'ABORTED' : 'white'
 }
 jenkins_regex = r"Build ([A-Z]+): (.*) #"
 
@@ -107,6 +108,12 @@ def issue_current_jenkins_directive(directive):
 
     color = jenkins_color(directive)
     segment_number = jenkins_segment(directive)
+    if segment_number == 0:
+        issue_start_build()
+        return
+
+    if segment_number == 1:
+        issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
 
     # update_segment:2:6:3:1.0:green
     tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
