@@ -112,6 +112,9 @@ def issue_current_jenkins_directive(directive, play_sound):
     segment_number = jenkins_segment(directive)
     if segment_number == 0:
         issue_start_build()
+        if play_sound:
+          print 'playing start_build.mp3...'
+          os.system('mpg321 start_build.mp3 &')
         return
 
     if play_sound:
