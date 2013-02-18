@@ -2,12 +2,15 @@ import time
 from time import sleep
 import re
 from LPD8806 import *
+import os
 
 import boto.sqs
 # conn = boto.sqs.connect_to_region("ap-southeast-2", aws_access_key_id='aws access key', aws_secret_access_key='aws secret key')
 conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
 q = conn.get_queue('raspberry-pipeline')
 
+from boto.sqs.jsonmessage import JSONMessage
+#q.set_message_class(JSONMessage)
 from boto.sqs.message import RawMessage
 q.set_message_class(RawMessage)
 
@@ -98,9 +101,8 @@ def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
     led.anim_larson_rainbow(tail, fade, start_idx, end_idx)
     led.update()
 
-
 #---------
-def issue_current_jenkins_directive(directive):
+def issue_current_jenkins_directive(directive, play_sound):
 
     if directive == 'all_off':
         issue_all_off()
@@ -112,12 +114,19 @@ def issue_current_jenkins_directive(directive):
         issue_start_build()
         return
 
+    if play_sound:
+      if color == 'green':
+        print 'playing familyfeud-cut.mp3...'
+        os.system('mpg321 familyfeud-cut.mp3 &')
+      elif color == 'red':
+        print 'playing BahBow.mp3...'
+        os.system('mpg321 BahBow.mp3 &')
+
     if segment_number == 1:
         issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
 
     # update_segment:2:6:3:1.0:green
     tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
-    print tokens
     issue_update_segment(tokens)
 #---------
 
@@ -140,10 +149,12 @@ def issue_current_directive(directive):
 def main():
     try:
         directive = 'all_off'
+        play_sound = False
         job = None
         last_second = time.localtime().tm_sec
         while True:
-            issue_current_jenkins_directive(directive)
+            issue_current_jenkins_directive(directive, play_sound)
+            play_sound = False
 
             now = time.localtime().tm_sec
             if now != last_second:
@@ -153,6 +164,7 @@ def main():
                 if job is not None:
                     print "job found with content: {0}".format(job.get_body())
                     directive = job.get_body()
+                    play_sound = True
                     q.delete_message(job)
 
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
@@ -162,4 +174,4 @@ def main():
         led.all_off()
 
 if __name__ == '__main__':
-    main()    
+    main()
