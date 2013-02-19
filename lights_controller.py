@@ -8,6 +8,8 @@ from lib.LPD8806 import *
 import boto.sqs
 from boto.sqs.message import RawMessage
 
+logging.basicConfig(filename='pipeline.log',level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+
 colors = {
     'red' : Color(255, 0, 0),
     'green' : Color(0, 255, 0),
@@ -101,16 +103,16 @@ def issue_current_jenkins_directive(directive, play_sound):
     if segment_number == 0:
         issue_start_build()
         if play_sound:
-          print 'playing start_build.mp3...'
+          logging.info('playing start_build.mp3...')
           os.system('mpg321 start_build.mp3 &')
         return
 
     if play_sound:
       if color == 'green':
-        print 'playing familyfeud-cut.mp3...'
+        logging.info('playing familyfeud-cut.mp3...')
         os.system('mpg321 familyfeud-cut.mp3 &')
       elif color == 'red':
-        print 'playing BahBow.mp3...'
+        logging.info('playing BahBow.mp3...')
         os.system('mpg321 BahBow.mp3 &')
 
     if segment_number == 1:
@@ -153,10 +155,10 @@ def main():
             now = time.localtime().tm_sec
             if now != last_second:
                 last_second = now
-                print 'polling..'
+                logging.info('polling..')
                 job = q.read()
                 if job is not None:
-                    print "job found with content: {0}".format(job.get_body())
+                    logging.info("job found with content: {0}".format(job.get_body()))
                     directive = job.get_body()
                     play_sound = True
                     q.delete_message(job)
@@ -164,7 +166,7 @@ def main():
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
 
     except KeyboardInterrupt:
-        print '^C received, shutting down controller'
+        logging.info('^C received, shutting down controller')
         led.all_off()
 
 if __name__ == '__main__':
