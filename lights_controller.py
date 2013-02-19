@@ -1,22 +1,12 @@
 import time
-from time import sleep
+import logging
 import re
-from lib.LPD8806 import *
 import os
+from time import sleep
 
+from lib.LPD8806 import *
 import boto.sqs
-# conn = boto.sqs.connect_to_region("ap-southeast-2", aws_access_key_id='aws access key', aws_secret_access_key='aws secret key')
-conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
-q = conn.get_queue('raspberry-pipeline')
-
-from boto.sqs.jsonmessage import JSONMessage
-#q.set_message_class(JSONMessage)
 from boto.sqs.message import RawMessage
-q.set_message_class(RawMessage)
-
-#import os
-#print os.environ['AWS_ACCESS_KEY_ID']
-#print os.environ['AWS_SECRET_ACCESS_KEY']
 
 colors = {
     'red' : Color(255, 0, 0),
@@ -24,32 +14,6 @@ colors = {
     'blue' : Color(0, 0, 255),
     'white' : Color(255, 255, 255),
 }
-
-
-#---------
-jenkins_segments = {
-    'Prepare' : 0,
-    'Unit Tests' : 1,
-    'Integration Tests' : 2,
-    'Deploy Test' : 3,
-    'Deploy to QA' : 4
-}
-jenkins_colors = {
-    'FAILURE' : 'red',
-    'SUCCESS' : 'green',
-    'ABORTED' : 'white'
-}
-jenkins_regex = r"Build ([A-Z]+): (.*) #"
-
-def jenkins_color(message):
-    match = re.search(jenkins_regex, message)
-    return jenkins_colors[match.group(1)]
-
-def jenkins_segment(message):
-    match = re.search(jenkins_regex, message)
-    return jenkins_segments[match.group(2)]
-#---------
-
 
 # setup long-lived stateful LEDStrip instance
 default_led_count = 32
@@ -102,6 +66,30 @@ def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
     led.update()
 
 #---------
+jenkins_segments = {
+    'Prepare' : 0,
+    'Unit Tests' : 1,
+    'Integration Tests' : 2,
+    'Deploy Test' : 3,
+    'Deploy to QA' : 4
+}
+
+jenkins_colors = {
+    'FAILURE' : 'red',
+    'SUCCESS' : 'green',
+    'ABORTED' : 'white'
+}
+
+jenkins_regex = r"Build ([A-Z]+): (.*) #"
+
+def jenkins_color(message):
+    match = re.search(jenkins_regex, message)
+    return jenkins_colors[match.group(1)]
+
+def jenkins_segment(message):
+    match = re.search(jenkins_regex, message)
+    return jenkins_segments[match.group(2)]
+
 def issue_current_jenkins_directive(directive, play_sound):
 
     if directive == 'all_off':
@@ -151,6 +139,9 @@ def issue_current_directive(directive):
 
 def main():
     try:
+        conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
+        q = conn.get_queue('raspberry-pipeline')
+        q.set_message_class(RawMessage)
         directive = 'all_off'
         play_sound = False
         job = None
