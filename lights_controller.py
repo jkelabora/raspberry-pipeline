@@ -1,7 +1,7 @@
 import time
 from time import sleep
 import re
-from LPD8806 import *
+from lib.LPD8806 import *
 import os
 
 import boto.sqs
