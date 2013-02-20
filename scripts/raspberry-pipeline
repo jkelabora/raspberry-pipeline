@@ -9,8 +9,8 @@ case "$1" in
     ;;
     stop)
         echo "Stopping raspberry-pipeline"
-        R-PI_PID=`ps auxwww | grep lights_controller.py | head -1 | awk '{print $2}'`
-        kill -9 $R-PI_PID
+        RPI_PID=`ps auxwww | grep lights_controller.py | head -1 | awk '{print $2}'`
+        kill -9 $RPI_PID
     ;;
     *)
         echo "Usage: /etc/init.d/raspberry-pipeline {start|stop}"
