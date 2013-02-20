@@ -5,7 +5,11 @@ $ git clone git://github.com/boto/boto.git
 $ cd boto
 $ sudo python setup.py install
 
-sudo AWS_ACCESS_KEY_ID=[--INSERT--] AWS_SECRET_ACCESS_KEY=[--INSERT--] python lights_controller.py &
+sudo cp scripts/raspberry-pipeline /etc/init.d/
+sudo update-rc.d raspberry-pipeline defaults
+
+sudo /etc/init.d/raspberry-pipeline {start|stop}
+
 
 cd aws-java-sdk-1.3.30/samples/AmazonSimpleQueueService
 echo "accessKey=[--INSERT--]" > AwsCredentials.properties && echo "secretKey=[--INSERT--]" >> AwsCredentials.properties

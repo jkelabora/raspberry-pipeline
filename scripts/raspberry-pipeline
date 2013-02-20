@@ -5,9 +5,7 @@ export HOME
 case "$1" in
     start)
         echo "Starting raspberry-pipeline"
-        AWS_ACCESS_KEY_ID=[--INSERT--]
-        AWS_SECRET_ACCESS_KEY=[--INSERT--]
-        python /home/pi/raspberry-pipeline/lights_controller.py  2>&1 &
+        AWS_ACCESS_KEY_ID=[--INSERT--] AWS_SECRET_ACCESS_KEY=[--INSERT--] python /home/pi/raspberry-pipeline/lights_controller.py 2>&1 &
     ;;
     stop)
         echo "Stopping raspberry-pipeline"
