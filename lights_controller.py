@@ -116,10 +116,7 @@ def issue_current_jenkins_directive(directive, play_sound):
         os.system('mpg321 BahBow.mp3 &')
 
     if segment_number == 1:
-        if play_sound:
-            issue_all_off()
         issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
-        return
 
     # update_segment:2:6:3:1.0:green
     tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
