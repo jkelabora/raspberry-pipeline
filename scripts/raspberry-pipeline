@@ -2,13 +2,17 @@
 # /etc/init.d/raspberry-pipeline
  
 export HOME
+export RPI_HOME=$HOME/raspberry-pipeline
+export AWS_ACCESS_KEY_ID=[--INSERT--]
+export AWS_SECRET_ACCESS_KEY=[--INSERT--]
+
 case "$1" in
     start)
-        echo "Starting raspberry-pipeline"
-        AWS_ACCESS_KEY_ID=[--INSERT--] AWS_SECRET_ACCESS_KEY=[--INSERT--] python /home/pi/raspberry-pipeline/lights_controller.py 2>&1 &
+        echo "Starting raspberry-pipeline..."
+        python $RPI_HOME/lights_controller.py 2>&1 &
     ;;
     stop)
-        echo "Stopping raspberry-pipeline"
+        echo "Stopping raspberry-pipeline..."
         RPI_PID=`ps auxwww | grep lights_controller.py | head -1 | awk '{print $2}'`
         kill -9 $RPI_PID
     ;;

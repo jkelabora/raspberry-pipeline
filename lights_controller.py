@@ -1,3 +1,5 @@
+# script expects RPI_HOME to be set as an env var
+
 import time
 import re
 import os
@@ -5,9 +7,10 @@ from time import sleep
 import Queue
 from lib.LPD8806 import *
 from queue_readers.aws_sqs import *
-
+import os
 import logging
-logging.basicConfig(filename='pipeline.log',level=logging.INFO, format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
+
+logging.basicConfig(filename="{0}/logs/pipeline.log".format(os.environ['RPI_HOME']), level=logging.INFO, format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger()
 
 colors = {
@@ -92,6 +95,17 @@ def jenkins_segment(message):
     match = re.search(jenkins_regex, message)
     return jenkins_segments[match.group(2)]
 
+
+def randomly_choose_mp3(directory):
+    from random import randrange
+    import glob
+    files = glob.glob("{0}*.mp3".format(directory))
+    files[randrange(len(files))]
+
+def play_sound(filename):
+    log.info("playing {0}...".format(filename))
+    # os.system("mpg321 {0} &".format(filename))
+
 def issue_current_jenkins_directive(directive, play_sound):
 
     if directive == 'all_off':
@@ -103,17 +117,14 @@ def issue_current_jenkins_directive(directive, play_sound):
     if segment_number == 0:
         issue_start_build()
         if play_sound:
-          log.info('playing start_build.mp3...')
-          os.system('mpg321 start_build.mp3 &')
+          play_sound(randomly_choose_mp3("{0}/sounds/start_build/".format(os.environ['RPI_HOME'])))
         return
 
     if play_sound:
       if color == 'green':
-        log.info('playing familyfeud-cut.mp3...')
-        os.system('mpg321 familyfeud-cut.mp3 &')
+        play_sound(randomly_choose_mp3("{0}/sounds/success/".format(os.environ['RPI_HOME'])))
       elif color == 'red':
-        log.info('playing BahBow.mp3...')
-        os.system('mpg321 BahBow.mp3 &')
+        play_sound(randomly_choose_mp3("{0}/sounds/failure/".format(os.environ['RPI_HOME'])))
 
     if segment_number == 1:
         issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
