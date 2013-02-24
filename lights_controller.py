@@ -1,14 +1,14 @@
 import time
-import logging
 import re
 import os
 from time import sleep
 
 from lib.LPD8806 import *
-import boto.sqs
-from boto.sqs.message import RawMessage
+from queue_readers.aws_sqs import *
 
+import logging
 logging.basicConfig(filename='pipeline.log',level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+log = logging.getLogger()
 
 colors = {
     'red' : Color(255, 0, 0),
@@ -103,16 +103,16 @@ def issue_current_jenkins_directive(directive, play_sound):
     if segment_number == 0:
         issue_start_build()
         if play_sound:
-          logging.info('playing start_build.mp3...')
+          log.info('playing start_build.mp3...')
           os.system('mpg321 start_build.mp3 &')
         return
 
     if play_sound:
       if color == 'green':
-        logging.info('playing familyfeud-cut.mp3...')
+        log.info('playing familyfeud-cut.mp3...')
         os.system('mpg321 familyfeud-cut.mp3 &')
       elif color == 'red':
-        logging.info('playing BahBow.mp3...')
+        log.info('playing BahBow.mp3...')
         os.system('mpg321 BahBow.mp3 &')
 
     if segment_number == 1:
@@ -140,34 +140,37 @@ def issue_current_directive(directive):
 
 
 def main():
-    try:
-        conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
-        q = conn.get_queue('raspberry-pipeline')
-        q.set_message_class(RawMessage)
-        directive = 'all_off'
-        play_sound = False
-        job = None
-        last_second = time.localtime().tm_sec
-        while True:
+
+    local_q = Queue.Queue()
+    SQS(local_q).start() # start a thread to wait on a message to appear on the sqs queue
+
+    directive = 'all_off'
+    play_sound = False
+    last_second = time.localtime().tm_sec
+
+    while True:
+        try:
             issue_current_jenkins_directive(directive, play_sound)
             play_sound = False
 
             now = time.localtime().tm_sec
             if now != last_second:
                 last_second = now
-                logging.info('polling..')
-                job = q.read()
-                if job is not None:
-                    logging.info("job found with content: {0}".format(job.get_body()))
-                    directive = job.get_body()
-                    play_sound = True
-                    q.delete_message(job)
+                job = local_q.get_nowait() # this will normally throw Queue.Empty
+                log.info('proceeding to process message from local queue..')
+                directive = job
+                play_sound = True
+                local_q.task_done()
+                SQS(local_q).start() # start another thread to wait on a message to appear on the sqs queue
 
+        except Queue.Empty:
+            log.info('polling..')
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
 
-    except KeyboardInterrupt:
-        logging.info('^C received, shutting down controller')
-        led.all_off()
+        except KeyboardInterrupt:
+            log.info('^C received, shutting down controller')
+            led.all_off()
+            sys.exit()
 
 if __name__ == '__main__':
     main()

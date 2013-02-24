@@ -1,9 +1,7 @@
 ##############
-
 # read message api
-#: queue_name => String
-#: read_next => String(message body) or None
-#: delete_last
+#: put last read message on local queue => String(message body) or None
+##############
 
 import beanstalkc
 beanstalk = beanstalkc.Connection(host='localhost', port=14711, parse_yaml=False)
