@@ -100,11 +100,11 @@ def randomly_choose_mp3(directory):
     from random import randrange
     import glob
     files = glob.glob("{0}*.mp3".format(directory))
-    files[randrange(len(files))]
+    return files[randrange(len(files))]
 
-def play_sound(filename):
+def play_this_thing(filename):
     log.info("playing {0}...".format(filename))
-    # os.system("mpg321 {0} &".format(filename))
+    os.system("mpg321 {0} &".format(filename))
 
 def issue_current_jenkins_directive(directive, play_sound):
 
@@ -117,14 +117,14 @@ def issue_current_jenkins_directive(directive, play_sound):
     if segment_number == 0:
         issue_start_build()
         if play_sound:
-          play_sound(randomly_choose_mp3("{0}/sounds/start_build/".format(os.environ['RPI_HOME'])))
+          play_this_thing(randomly_choose_mp3("{0}/sounds/start_build/".format(os.environ['RPI_HOME'])))
         return
 
     if play_sound:
       if color == 'green':
-        play_sound(randomly_choose_mp3("{0}/sounds/success/".format(os.environ['RPI_HOME'])))
+        play_this_thing(randomly_choose_mp3("{0}/sounds/success/".format(os.environ['RPI_HOME'])))
       elif color == 'red':
-        play_sound(randomly_choose_mp3("{0}/sounds/failure/".format(os.environ['RPI_HOME'])))
+        play_this_thing(randomly_choose_mp3("{0}/sounds/failure/".format(os.environ['RPI_HOME'])))
 
     if segment_number == 1:
         issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
