@@ -1,32 +1,31 @@
-##############
-# read message api
-#: put last read message on local queue => String(message body) or None
-##############
-
-# $ git clone https://github.com/boto/boto.git
-# $ cd boto
-# $ python setup.py install
-
 import boto.sqs
-import sys
+from boto.sqs.message import RawMessage
 import threading
 import logging
+from time import sleep
 
-class SQS(threading.Thread):
+# poll for messages on sqs (which can take a while), re-post found messages to local queue
+# for main thread to process without latency
+class PollSQSWorker(threading.Thread):
   def __init__(self, local_q):
-    threading.Thread.__init__(self)
-    self.daemon = True
+    threading.Thread.__init__(self) # required when extending threading.Thread
+    self.daemon = True # so that this thread get killed when the main thread does
     self.local_q = local_q
 
-    conn = boto.sqs.connect_to_region('ap-southeast-2') #assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
+    conn = boto.sqs.connect_to_region('ap-southeast-2') # assumes AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env var's
     self.sqs_q = conn.get_queue('raspberry-pipeline')
     self.sqs_q.set_message_class(RawMessage)
 
     logging.getLogger().info('new SQS reader thread started..')
 
   def run(self):
-    job = self.sqs_q.read(visibility_timeout=None, wait_time_seconds=sys.maxsize)
-    logging.getLogger().info("job found with content: {0}".format(job.get_body()))
-    self.local_q.put(job.get_body())
-    self.sqs_q.delete_message(job)
-
+    poll = True
+    while poll:
+      sleep(1.0)
+      logging.getLogger().info('polling SQS..')
+      job = self.sqs_q.read()
+      if job is not None:
+        logging.getLogger().info("job found with content: {0}".format(job.get_body()))
+        self.local_q.put(job.get_body())
+        self.sqs_q.delete_message(job)
+        poll = False

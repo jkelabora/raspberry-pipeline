@@ -2,12 +2,12 @@ import time
 import re
 import os
 from time import sleep
-
+import Queue
 from lib.LPD8806 import *
 from queue_readers.aws_sqs import *
 
 import logging
-logging.basicConfig(filename='pipeline.log',level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(filename='pipeline.log',level=logging.INFO, format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger()
 
 colors = {
@@ -142,29 +142,25 @@ def issue_current_directive(directive):
 def main():
 
     local_q = Queue.Queue()
-    SQS(local_q).start() # start a thread to wait on a message to appear on the sqs queue
+    PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
 
     directive = 'all_off'
     play_sound = False
-    last_second = time.localtime().tm_sec
 
     while True:
         try:
             issue_current_jenkins_directive(directive, play_sound)
             play_sound = False
 
-            now = time.localtime().tm_sec
-            if now != last_second:
-                last_second = now
-                job = local_q.get_nowait() # this will normally throw Queue.Empty
-                log.info('proceeding to process message from local queue..')
-                directive = job
-                play_sound = True
-                local_q.task_done()
-                SQS(local_q).start() # start another thread to wait on a message to appear on the sqs queue
+            job = local_q.get_nowait() # this will normally throw Queue.Empty
+
+            log.info('proceeding to process message passed to local queue..')
+            directive = job
+            play_sound = True
+            local_q.task_done()
+            PollSQSWorker(local_q).start() # old thread has terminated so start another one to poll sqs queue
 
         except Queue.Empty:
-            log.info('polling..')
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
 
         except KeyboardInterrupt:
