@@ -5,6 +5,9 @@ $ git clone git://github.com/boto/boto.git
 $ cd boto
 $ sudo python setup.py install
 
+$ sudo apt-get install alsa-utils
+$ sudo apt-get install mpg321
+
 sudo cp scripts/raspberry-pipeline /etc/init.d/
 sudo update-rc.d raspberry-pipeline defaults
 
