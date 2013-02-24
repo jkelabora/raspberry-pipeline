@@ -3,3 +3,4 @@ LPD8806.pyc
 lib/__init__.pyc
 *.mp3
 pipeline.log
+queue_readers/*.pyc
