@@ -366,7 +366,7 @@ class LEDStrip:
 		
 		self.waveStep += 1
 
-	def anim_pulse_segment(pulseColor='white', start=0, end=0):
+	def anim_pulse_segment(self, pulseColor='white', start=0, end=0):
 		if (self.pulseCurrent + self.pulseInc) < 0 or (self.pulseCurrent + self.pulseInc) > 255:
 			self.pulseInc *= -1
 
@@ -382,9 +382,4 @@ class LEDStrip:
 		elif pulseColor=='white':
 			r,g,b = self.pulseCurrent, self.pulseCurrent, self.pulseCurrent
 
-		print r
-		print g
-		print b
-		print '--'
-
-		led.fill((Color(r, g, b), start, end)
+		self.fill(Color(r, g, b), start, end)
