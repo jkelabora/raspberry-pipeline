@@ -113,7 +113,10 @@ class LEDStrip:
 		self.larsonDir = -1
 		self.larsonLast = 0
 		self.waveStep = 0
-		
+
+		self.pulseCurrent = 0
+		self.pulseInc = 10
+
 		for led in range(self.leds):
 			self.buffer[led] = bytearray(3)
 		for i in range(256):
@@ -363,3 +366,25 @@ class LEDStrip:
 		
 		self.waveStep += 1
 
+	def anim_pulse_segment(pulseColor='white', start=0, end=0):
+		if (self.pulseCurrent + self.pulseInc) < 0 or (self.pulseCurrent + self.pulseInc) > 255:
+			self.pulseInc *= -1
+
+		self.pulseCurrent += self.pulseInc
+
+		r,g,b = 0,0,0
+		if pulseColor=='red':
+			r = self.pulseCurrent
+		elif pulseColor=='green':
+			g = self.pulseCurrent
+		elif pulseColor=='blue':
+			b = self.pulseCurrent
+		elif pulseColor=='white':
+			r,g,b = self.pulseCurrent, self.pulseCurrent, self.pulseCurrent
+
+		print r
+		print g
+		print b
+		print '--'
+
+		led.fill((Color(r, g, b), start, end)
