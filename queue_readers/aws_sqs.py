@@ -23,7 +23,7 @@ class PollSQSWorker(threading.Thread):
     poll = True
     while poll:
       sleep(1.0)
-      logging.getLogger().info('polling queue {0}/{1}..'.format(os.environ['SQS_REGION'], os.environ['SQS_QUEUE_NAME']))
+      logging.getLogger().info("polling queue '{0}/{1}'..".format(os.environ['SQS_REGION'], os.environ['SQS_QUEUE_NAME']))
       job = self.sqs_q.read()
       if job is not None:
         logging.getLogger().info("job found with content: {0}".format(job.get_body()))
