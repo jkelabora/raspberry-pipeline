@@ -1,4 +1,20 @@
-A lightweight webserver which communicates via a simple message queue with a Raspberry Pi LED-strip control script - designed as an easy to use build pipeline monitor.
+
+Raspberry Pi (Type B)
+
+Occidentalis v0.2
+http://learn.adafruit.com/adafruit-raspberry-pi-educational-linux-distro/overview
+
+
+http://learn.adafruit.com/light-painting-with-raspberry-pi/hardware
+
+https://www.adafruit.com/products/306 (Digital RGB LED Weatherproof Strip 32 LED - (1m))
+http://www.adafruit.com/products/914 (Adafruit Pi Cobbler Breakout Kit for Raspberry Pi)
+https://www.adafruit.com/products/276 (5V 2A (2000mA) switching power supply - UL Listed)
+https://www.adafruit.com/products/368 (Female DC Power adapter - 2.1mm jack to screw terminal block)
+http://www.adafruit.com/products/578 (4-pin JST SM Plug + Receptacle Cable Set)
+
+
+https://github.com/jkelabora/snsnotify-plugin
 
 ```
 $ git clone git://github.com/boto/boto.git
