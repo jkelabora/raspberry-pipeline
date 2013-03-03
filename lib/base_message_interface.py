@@ -1,13 +1,3 @@
-from lib.LPD8806 import Color
-from lib.LPD8806 import LEDStrip
-
-colours = {
-    'red' : Color(255, 0, 0),
-    'green' : Color(0, 255, 0),
-    'blue' : Color(0, 0, 255),
-    'white' : Color(255, 255, 255),
-}
-
 # provides a set of messages to drive a stateful instance of a led strip driver.
 # animations (like issue_start_build) need to called repeatedly from a loop outside of this class.
 # available messages:
@@ -32,6 +22,16 @@ colours = {
 
 # 4) issue_all_off()
 #  - does what you think
+
+from lib.LPD8806 import Color
+from lib.LPD8806 import LEDStrip
+
+colours = {
+    'red' : Color(255, 0, 0),
+    'green' : Color(0, 255, 0),
+    'blue' : Color(0, 0, 255),
+    'white' : Color(255, 255, 255),
+}
 
 class BaseMessageInterface:
 

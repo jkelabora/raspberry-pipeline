@@ -15,28 +15,12 @@ logging.basicConfig(level=logging.INFO,
     format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger()
 
-
-def issue_current_directive(directive):
-    tokens = directive.split(':')
-    if tokens[0] == 'all_off':
-        issue_all_off()
-
-    elif tokens[0] == 'start_build':
-        issue_start_build()
-
-    # update:2:5:6:1.0:green:white:red:blue:red
-    elif tokens[0] == 'update':
-        issue_update(tokens[1:])
-
-    # update_segment:2:6:3:1.0:green
-    elif tokens[0] == 'update_segment':
-        issue_update_segment(tokens[1:])
-
 def main():
+
+    translator = JenkinsMessageTranslator() # switch this out with something else if need be
 
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
-    translator = JenkinsMessageTranslator()
 
     directive = 'all_off'
     play_sound = False

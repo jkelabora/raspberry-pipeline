@@ -20,7 +20,7 @@ def play_this_thing(filename):
 
 
 import re
-from lib.base_message_interface import *
+from lib.base_message_interface import BaseMessageInterface
 
 # these keys need to be case-sensitive matches of the jenkins build names
 jenkins_segments = {
@@ -47,7 +47,7 @@ class JenkinsMessageTranslator:
     def __init__(self):
         self.base_message_interface = BaseMessageInterface()
 
-    def issue_current_directive(self, directive, play_sound):
+    def issue_current_directive(self, directive, play_sound=False):
 
         if directive == 'all_off':
             self.base_message_interface.issue_all_off()

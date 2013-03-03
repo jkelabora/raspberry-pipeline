@@ -1,3 +1,6 @@
+# poll for messages on sqs (which can take a while), re-post found messages to local queue
+# for main thread to process without latency
+
 import boto.sqs
 from boto.sqs.message import RawMessage
 import threading
@@ -5,9 +8,8 @@ import logging
 from time import sleep
 import os
 
-# poll for messages on sqs (which can take a while), re-post found messages to local queue
-# for main thread to process without latency
 class PollSQSWorker(threading.Thread):
+
   def __init__(self, local_q):
     threading.Thread.__init__(self) # required when extending threading.Thread
     self.daemon = True # so that this thread get killed when the main thread does
