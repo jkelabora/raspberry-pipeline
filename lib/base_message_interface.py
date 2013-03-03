@@ -63,7 +63,7 @@ class BaseMessageInterface:
         segment_width = int(tokens[2])
 
         for i in range(segment_count):
-            seg_color = colours[tokens[i + 4]]
+            seg_color = colours[tokens[i + 4].lower()]
             seg_start_idx = i * segment_width + start_idx
             seg_end_idx = seg_start_idx + segment_width - 1
             self.led.fill(seg_color, seg_start_idx, seg_end_idx)
