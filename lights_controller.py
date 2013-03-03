@@ -10,7 +10,9 @@ from queue_readers.aws_sqs import *
 import os
 import logging
 
-logging.basicConfig(filename="{0}/logs/pipeline.log".format(os.environ['RPI_HOME']), level=logging.INFO, format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(level=logging.INFO,
+    filename="{0}/logs/pipeline.log".format(os.environ['RPI_HOME']),
+    format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger()
 
 colors = {
