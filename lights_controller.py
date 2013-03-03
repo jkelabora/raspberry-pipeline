@@ -5,8 +5,8 @@ import re
 import os
 from time import sleep
 import Queue
-from lib.LPD8806 import *
 from queue_readers.aws_sqs import *
+from lib.base_message_interface import *
 import os
 import logging
 
@@ -14,63 +14,6 @@ logging.basicConfig(level=logging.INFO,
     filename="{0}/logs/pipeline.log".format(os.environ['RPI_HOME']),
     format="%(asctime)s <%(threadName)s>: %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger()
-
-colors = {
-    'red' : Color(255, 0, 0),
-    'green' : Color(0, 255, 0),
-    'blue' : Color(0, 0, 255),
-    'white' : Color(255, 255, 255),
-}
-
-# setup long-lived stateful LEDStrip instance
-default_led_count = 32
-led = LEDStrip(default_led_count)
-
-
-def issue_all_off():
-    led.all_off()
-
-
-# update_segment:2:6:3:1.0:green
-def issue_update_segment(tokens):
-    led.setMasterBrightness(float(tokens[4]))
-    start_idx = int(tokens[1])
-    segment_width = int(tokens[2])
-    seg_start_idx = (int(tokens[3]) - 1) * segment_width + start_idx
-    seg_end_idx = seg_start_idx + segment_width - 1
-    seg_color = colors[tokens[5]]
-    # Fill the strand (or a subset) with a single Color
-    # def fill(self, color, start=0, end=0):
-    led.fill(seg_color, seg_start_idx, seg_end_idx)
-    led.update()
-
-
-# update:2:5:6:1.0:green:white:red:blue:red
-# update:2:5:6:1.0:green:white_pulse:red:blue_pulse:red <<--ignore _pulse elements for now
-def issue_update(tokens):
-    led.setMasterBrightness(float(tokens[4]))
-    start_idx = int(tokens[1])
-    segment_count = int(tokens[2])
-    segment_width = int(tokens[3])
-
-    for i in range(segment_count):
-        seg_color = colors[tokens[i + 5]]
-        seg_start_idx = i * segment_width + start_idx
-        seg_end_idx = seg_start_idx + segment_width - 1
-        # Fill the strand (or a subset) with a single Color
-        # def fill(self, color, start=0, end=0):
-        led.fill(seg_color, seg_start_idx, seg_end_idx)
-        led.update()
-
-
-# start_build:2:0.5:0:0:1.0
-def issue_start_build(tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
-    led.setMasterBrightness(brightness)
-
-    #larson scanner (i.e. Cylon Eye or K.I.T.T.) but Rainbow
-    # def anim_larson_rainbow(self, tail=2, fade=0.75, start=0, end=0):
-    led.anim_larson_rainbow(tail, fade, start_idx, end_idx)
-    led.update()
 
 #---------
 jenkins_segments = {
@@ -108,16 +51,20 @@ def play_this_thing(filename):
     log.info("playing {0}...".format(filename))
     os.system("mpg321 {0} &".format(filename))
 
+
+message_interface = BaseMessageInterface()
+
+
 def issue_current_jenkins_directive(directive, play_sound):
 
     if directive == 'all_off':
-        issue_all_off()
+        message_interface.issue_all_off()
         return
 
     color = jenkins_color(directive)
     segment_number = jenkins_segment(directive)
     if segment_number == 0:
-        issue_start_build()
+        message_interface.issue_start_build()
         if play_sound:
           play_this_thing(randomly_choose_mp3("{0}/sounds/start_build/".format(os.environ['RPI_HOME'])))
         return
@@ -129,11 +76,10 @@ def issue_current_jenkins_directive(directive, play_sound):
         play_this_thing(randomly_choose_mp3("{0}/sounds/failure/".format(os.environ['RPI_HOME'])))
 
     if segment_number == 1:
-        issue_update(['update','2','5','6','1.0',color,'blue','blue','blue','blue'])
+        message_interface.issue_update(['2','5','6','1.0',color,'blue','blue','blue','blue'])
 
-    # update_segment:2:6:3:1.0:green
-    tokens = ['update_segment', '2', '6', segment_number, '1.0', color]
-    issue_update_segment(tokens)
+    tokens = ['2', '6', segment_number, '1.0', color]
+    message_interface.issue_update_segment(tokens)
 #---------
 
 
@@ -143,13 +89,15 @@ def issue_current_directive(directive):
         issue_all_off()
 
     elif tokens[0] == 'start_build':
-        issue_start_build(int(tokens[1]), float(tokens[2]), int(tokens[3]), int(tokens[4]), float(tokens[5]))
+        issue_start_build()
 
+    # update:2:5:6:1.0:green:white:red:blue:red
     elif tokens[0] == 'update':
-        issue_update(tokens)
+        issue_update(tokens[1:])
 
+    # update_segment:2:6:3:1.0:green
     elif tokens[0] == 'update_segment':
-        issue_update_segment(tokens)
+        issue_update_segment(tokens[1:])
 
 
 def main():
