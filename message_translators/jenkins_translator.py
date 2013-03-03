@@ -2,25 +2,9 @@
 # https://github.com/jkelabora/snsnotify-plugin
 
 import os
-
-
-def randomly_choose_mp3(directory):
-    from random import randrange
-    import glob
-    files = glob.glob("{0}*.mp3".format(directory))
-    return files[randrange(len(files))]
-
-# import os
-import logging
-log = logging.getLogger()
-
-def play_this_thing(filename):
-    log.info("playing {0}...".format(filename))
-    os.system("mpg321 {0} &".format(filename))
-
-
 import re
 from lib.base_message_interface import BaseMessageInterface
+from sounds.player import Player
 
 # these keys need to be case-sensitive matches of the jenkins build names
 jenkins_segments = {
@@ -46,6 +30,7 @@ class JenkinsMessageTranslator:
 
     def __init__(self):
         self.base_message_interface = BaseMessageInterface()
+        self.sound_player = Player()
 
     def issue_current_directive(self, directive, play_sound=False):
 
@@ -58,14 +43,14 @@ class JenkinsMessageTranslator:
         if segment_number == 0:
             self.base_message_interface.issue_start_build()
             if play_sound:
-              play_this_thing(randomly_choose_mp3("{0}/sounds/start_build/".format(os.environ['RPI_HOME'])))
+              self.sound_player.play_random_start_sound()
             return
 
         if play_sound:
           if color == 'green':
-            play_this_thing(randomly_choose_mp3("{0}/sounds/success/".format(os.environ['RPI_HOME'])))
+            self.sound_player.play_random_success_sound()
           elif color == 'red':
-            play_this_thing(randomly_choose_mp3("{0}/sounds/failure/".format(os.environ['RPI_HOME'])))
+            self.sound_player.play_random_failure_sound()
 
         if segment_number == 1:
             self.base_message_interface.issue_update(['2','5','6','1.0',color,'blue','blue','blue','blue'])
