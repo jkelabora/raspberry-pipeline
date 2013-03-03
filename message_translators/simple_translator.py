@@ -18,7 +18,7 @@ class SimpleMessageTranslator:
     def __init__(self):
         self.base_message_interface = BaseMessageInterface()
 
-    def issue_current_directive(self, directive, play_sound=False):
+    def issue_directive(self, directive, play_sound=False):
         tokens = directive.split(':')
 
         if tokens[0] == 'all_off':

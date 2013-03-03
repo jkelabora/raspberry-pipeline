@@ -32,7 +32,7 @@ class JenkinsMessageTranslator:
         self.base_message_interface = BaseMessageInterface()
         self.sound_player = Player()
 
-    def issue_current_directive(self, directive, play_sound=False):
+    def issue_directive(self, directive, play_sound=False):
 
         if directive == 'all_off':
             self.base_message_interface.issue_all_off()

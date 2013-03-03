@@ -20,18 +20,18 @@ def main():
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
 
-    directive = 'all_off'
+    current_directive = 'all_off'
     play_sound = False
 
     while True:
         try:
-            translator.issue_current_directive(directive, play_sound)
+            translator.issue_directive(current_directive, play_sound)
             play_sound = False
 
             job = local_q.get_nowait() # this will normally throw Queue.Empty
 
             log.info('proceeding to process message passed to local queue..')
-            directive = job
+            current_directive = job
             play_sound = True
             local_q.task_done()
             PollSQSWorker(local_q).start() # old thread has terminated so start another one to poll sqs queue
@@ -41,7 +41,7 @@ def main():
 
         except KeyboardInterrupt:
             log.info('^C received, shutting down controller')
-            led.all_off()
+            translator.issue_directive('all_off')
             sys.exit()
 
 if __name__ == '__main__':
