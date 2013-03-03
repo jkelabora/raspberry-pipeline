@@ -1,13 +1,11 @@
 # script expects RPI_HOME to be set as an env var
 
-import time
-import re
 import os
-from time import sleep
 import Queue
-from queue_readers.aws_sqs import PollSQSWorker
-import os
+from time import sleep
 import logging
+
+from queue_readers.aws_sqs import PollSQSWorker
 from message_translators.jenkins_translator import JenkinsMessageTranslator
 
 logging.basicConfig(level=logging.INFO,
