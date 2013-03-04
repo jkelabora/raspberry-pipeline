@@ -31,6 +31,7 @@ $ sudo apt-get install alsa-utils
 $ sudo apt-get install mpg321
 
 sudo cp scripts/raspberry-pipeline /etc/init.d/
+sudo vi /etc/init.d/raspberry-pipeline         <-- will expect AWS creds by default.. update or remove as required
 sudo update-rc.d raspberry-pipeline defaults
 
 sudo /etc/init.d/raspberry-pipeline {start|stop}
