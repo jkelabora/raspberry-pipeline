@@ -240,7 +240,7 @@ class LEDStrip:
 		for i in range(size):
 			color = (i + self.rainbowStep) % 384
 			c = self.wheel_color(color)
-			hue = (i + self.larsonStep) % 360
+			# hue = (i + self.larsonStep) % 360
 			self.set(start + i, c)
 		
 		self.rainbowStep += 1

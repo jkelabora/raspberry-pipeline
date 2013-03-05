@@ -1,5 +1,6 @@
 # script expects RPI_HOME to be set as an env var
 
+import sys
 import os
 import Queue
 from time import sleep
