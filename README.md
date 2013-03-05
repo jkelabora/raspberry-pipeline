@@ -48,6 +48,8 @@ $ sudo apt-get install mpg321
 ```
 Then:
 ```
+$ git clone https://github.com/jkelabora/raspberry-pipeline.git
+$ cd raspberry-pipeline
 $ sudo cp scripts/raspberry-pipeline /etc/init.d/
 $ sudo vi /etc/init.d/raspberry-pipeline         <-- will expect AWS creds by default.. update or remove as required
 $ sudo update-rc.d raspberry-pipeline defaults
