@@ -1,3 +1,5 @@
+Designed for consuming messages (via SQS) from an AWS hosted Jenkins - but can be used for local Jenkins installs and/or non-SQS messaging. Support for non-Jenkins CI tools could be added also.
+
 Raspberry Pi (Type B)
 
 Occidentalis v0.2
