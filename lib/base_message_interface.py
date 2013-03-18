@@ -23,51 +23,52 @@
 # 4) issue_all_off()
 #  - does what you think
 
-from lib.LPD8806 import Color
-from lib.LPD8806 import LEDStrip
+from lib.colour import Colour
+from lib.ledstrip import Strand
+import collections
 
 colours = {
-    'red' : Color(255, 0, 0),
-    'green' : Color(0, 255, 0),
-    'blue' : Color(0, 0, 255),
-    'white' : Color(255, 255, 255),
+    'red' : Colour(255, 0, 0),
+    'green' : Colour(0, 255, 0),
+    'blue' : Colour(0, 0, 255),
+    'white' : Colour(255, 255, 255)
 }
+
+colourList = [[0,0,250],[0,0,225],[0,0,200],[0,0,175],[0,0,150],[0,0,125],[0,0,100],[0,0,75],[0,0,50],[0,0,25],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+
 
 class BaseMessageInterface:
 
     def __init__(self, default_led_count=32):
-        self.led = LEDStrip(default_led_count) # long-lived stateful LEDStrip instance
+        self.led = strand(default_led_count) # long-lived stateful LEDStrip instance
+        self.p = collections.deque(xrange(len(colourList)))
 
-    def issue_start_build(self, tail=2, fade=0.5, start_idx=0, end_idx=0, brightness=1.0):
-        self.led.setMasterBrightness(brightness)
-
-        self.led.anim_larson_rainbow(tail, fade, start_idx, end_idx)
-        self.led.update()
+    def issue_start_build(self):
+        for x in xrange(0,32):
+            self.p.rotate(1)
+            self.led.set(x,colourList[self.p[0]][0],colourList[self.p[0]][1],colourList[self.p[0]][2])
+        self.p.rotate((len(self.p)-1))
 
     def issue_update_segment(self, tokens):
-        self.led.setMasterBrightness(float(tokens[3]))
-
         start_idx = int(tokens[0])
         segment_width = int(tokens[1])
         seg_start_idx = (int(tokens[2]) - 1) * segment_width + start_idx
         seg_end_idx = seg_start_idx + segment_width - 1
-        seg_color = colours[tokens[4].lower()]
-        self.led.fill(seg_color, seg_start_idx, seg_end_idx)
+        seg_colour = colours[tokens[4].lower()]
+        self.led.fill(seg_colour.R, seg_colour.G, seg_colour.B, seg_start_idx, seg_end_idx)
         self.led.update()
 
     def issue_update(self, tokens):
-        self.led.setMasterBrightness(float(tokens[3]))
-
         start_idx = int(tokens[0])
         segment_count = int(tokens[1])
         segment_width = int(tokens[2])
 
         for i in range(segment_count):
-            seg_color = colours[tokens[i + 4].lower()]
+            seg_colour = colours[tokens[i + 4].lower()]
             seg_start_idx = i * segment_width + start_idx
             seg_end_idx = seg_start_idx + segment_width - 1
-            self.led.fill(seg_color, seg_start_idx, seg_end_idx)
+            self.led.fill(seg_colour.R, seg_colour.G, seg_colour.B, seg_start_idx, seg_end_idx)
             self.led.update()
 
     def issue_all_off(self):
-        self.led.all_off()
+        self.led.fill(0,0,0)
