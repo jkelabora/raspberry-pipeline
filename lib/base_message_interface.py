@@ -40,7 +40,7 @@ colourList = [[0,0,250],[0,0,225],[0,0,200],[0,0,175],[0,0,150],[0,0,125],[0,0,1
 class BaseMessageInterface:
 
     def __init__(self, default_led_count=32):
-        self.led = strand(default_led_count) # long-lived stateful LEDStrip instance
+        self.led = Strand(default_led_count) # long-lived stateful LEDStrip instance
         self.p = collections.deque(xrange(len(colourList)))
 
     def issue_start_build(self):
