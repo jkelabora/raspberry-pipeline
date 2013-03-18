@@ -56,9 +56,9 @@ class Strand:
 		if end > self.leds: raise NameError("End invalid: " + str(end))
 
 		for led in range(start, end):
-			self.buffer[led][0] = self.gamma[g]
-			self.buffer[led][1] = self.gamma[r]
-			self.buffer[led][2] = self.gamma[b]
+			self.buffer[led][0] = self.gamma[int(g)]
+			self.buffer[led][1] = self.gamma[int(r)]
+			self.buffer[led][2] = self.gamma[int(b)]
 
 		self.update()
 
@@ -66,9 +66,9 @@ class Strand:
 		"""
 		Set a single LED a specific color
 		"""
-		self.buffer[pixel][0] = self.gamma[g]
-		self.buffer[pixel][1] = self.gamma[r]
-		self.buffer[pixel][2] = self.gamma[b]
+		self.buffer[pixel][0] = self.gamma[int(g)]
+		self.buffer[pixel][1] = self.gamma[int(r)]
+		self.buffer[pixel][2] = self.gamma[int(b)]
 
 		self.update()
 
