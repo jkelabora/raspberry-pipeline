@@ -56,7 +56,7 @@ class BaseMessageInterface:
         self.first_led_range.rotate((len(self.first_led_range)-1))
 
     def issue_start_second_build(self):
-        for x in xrange(0, 11):
+        for x in xrange(20, 31):
             self.second_led_range.rotate(1)
             self.led.set(x, base_animation_colours[self.second_led_range[0]][0],
                 base_animation_colours[self.second_led_range[0]][1], base_animation_colours[self.second_led_range[0]][2])
