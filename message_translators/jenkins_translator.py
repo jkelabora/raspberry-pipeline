@@ -5,28 +5,39 @@ import re
 from lib.base_message_interface import BaseMessageInterface
 from sounds.player import Player
 
-all_segments = {}
-
-# these keys need to be case-sensitive matches of the jenkins build names
+# the keys in STAGES need to be case-sensitive matches of the jenkins build names
 first_pipeline = {
-    'Prepare' : 0,
-    'Unit Tests' : 1,
-    'Integration Tests' : 2,
-    'Deploy Test' : 3,
-    'Deploy to QA' : 4,
-    'Deploy to Production' : 5
+    'OFFSET' : 0,
+    'STAGE_WIDTH' : 4,
+    'STAGES' : {
+        'Prepare' : 0,
+        'Unit Tests' : 1,
+        'Integration Tests' : 2,
+        'Deploy Test' : 3,
+        'Deploy to QA' : 4,
+        'Deploy to Production' : 5
+        }
 }
 
-# these keys need to be case-sensitive matches of the jenkins build names
+# the keys in STAGES need to be case-sensitive matches of the jenkins build names
 second_pipeline = {
-    'DT - Prepare' : 6,
-    'DT - Unit Test' : 7,
-    'DT - Deploy Test' : 8,
-    'DT - Deploy QA' : 9
+    'OFFSET' : 20,
+    'STAGE_WIDTH' : 4,
+    'STAGES' : {
+        'DT - Prepare' : 0,
+        'DT - Unit Test' : 1,
+        'DT - Deploy Test' : 2,
+        'DT - Deploy QA' : 3
+        }
 }
 
-all_segments.update(first_pipeline)
-all_segments.update(second_pipeline)
+def determine_pipeline(directive):
+    build_name = re.search(jenkins_regex, directive).group(2)
+    if re.match('^DT', build_name):
+        return second_pipeline
+    else
+        return first_pipeline
+
 
 # the keys here are from the snsnotify-plugin, the values need to match the base_message_interface colours
 jenkins_colours = {
@@ -51,42 +62,36 @@ class JenkinsMessageTranslator:
             self.base_message_interface.issue_all_off()
             return
 
-        color = self.determine_colour(directive)
-        segment_number = self.determine_segment_number(directive)
+        pipeline = determine_pipeline(directive)
+        colour = self.determine_colour(directive)
+        segment_number = self.determine_segment_number(directive, pipeline)
 
         if segment_number == 0:
-            self.base_message_interface.issue_start_build()
+            pipeline_length = pipeline['STAGE_WIDTH'] * (len(pipeline['STAGES'])-1) # exclude the Prepare stage
+            self.base_message_interface.issue_start_build(pipeline['OFFSET'], pipeline_length, pipeline == first_pipeline)
             if play_sound:
               self.sound_player.play_random_start_sound()
             return
-
-        if segment_number == 1:
-            self.base_message_interface.issue_update(['0','5','4',color,'blue','blue','blue','blue'])
-
-
-        if segment_number == 6:
-            self.base_message_interface.issue_start_second_build()
-            if play_sound:
-              self.sound_player.play_random_start_sound()
-            return
-
-        if segment_number == 7:
-            self.base_message_interface.issue_update(['0','3','4',color,'blue','blue'])
-
 
         if play_sound:
-          if color == 'green':
+          if colour == 'green':
             self.sound_player.play_random_success_sound()
-          elif color == 'red':
+          elif colour == 'red':
             self.sound_player.play_random_failure_sound()
 
-        tokens = ['0', '4', segment_number, color]
+        if segment_number == 1:
+            tokens = [pipeline['OFFSET'], (len(pipeline['STAGES'])-1), pipeline['STAGE_WIDTH'], colour] # exclude the Prepare stage
+            extras = ['blue'] * (len(pipeline['STAGES'])-2) # exclude the Prepare and first stages
+            self.base_message_interface.issue_update(tokens + extras)
+            return
+
+        tokens = [pipeline['OFFSET'], pipeline['STAGE_WIDTH'], segment_number, colour]
         self.base_message_interface.issue_update_segment(tokens)
 
     def determine_colour(self, message):
         match = re.search(jenkins_regex, message)
         return jenkins_colours[match.group(1)]
 
-    def determine_segment_number(self, message):
+    def determine_segment_number(self, message, pipeline):
         match = re.search(jenkins_regex, message)
-        return all_segments[match.group(2)]
+        return pipeline['STAGES'][match.group(2)]

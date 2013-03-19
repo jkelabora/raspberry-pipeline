@@ -48,19 +48,20 @@ class BaseMessageInterface:
         self.first_led_range = collections.deque(xrange(len(base_animation_colours[0:20])))
         self.second_led_range = collections.deque(xrange(len(base_animation_colours[0:12])))
 
-    def issue_start_first_build(self):
-        for x in xrange(0, 19):
-            self.first_led_range.rotate(1)
-            self.led.set(x, base_animation_colours[self.first_led_range[0]][0],
-                base_animation_colours[self.first_led_range[0]][1], base_animation_colours[self.first_led_range[0]][2])
-        self.first_led_range.rotate((len(self.first_led_range)-1))
+    def issue_start_build(self, start=0, end=31, first_led_range=True): # <----- fix first_led_range reference!
+        if first_led_range:  # blah...
+            for x in xrange(start, end):
+                self.first_led_range.rotate(1)
+                self.led.set(x, base_animation_colours[self.first_led_range[0]][0],
+                    base_animation_colours[self.first_led_range[0]][1], base_animation_colours[self.first_led_range[0]][2])
+            self.first_led_range.rotate((len(self.first_led_range)-1))
 
-    def issue_start_second_build(self):
-        for x in xrange(20, 31):
-            self.second_led_range.rotate(1)
-            self.led.set(x, base_animation_colours[self.second_led_range[0]][0],
-                base_animation_colours[self.second_led_range[0]][1], base_animation_colours[self.second_led_range[0]][2])
-        self.second_led_range.rotate((len(self.second_led_range)-1))
+        else:
+            for x in xrange(start, end):
+                self.second_led_range.rotate(1)
+                self.led.set(x, base_animation_colours[self.second_led_range[0]][0],
+                    base_animation_colours[self.second_led_range[0]][1], base_animation_colours[self.second_led_range[0]][2])
+            self.second_led_range.rotate((len(self.second_led_range)-1))
 
     def issue_update_segment(self, tokens):
         start_idx = int(tokens[0])
