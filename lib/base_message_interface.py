@@ -66,7 +66,7 @@ class BaseMessageInterface:
         start_idx = int(tokens[0])
         segment_width = int(tokens[1])
         seg_start_idx = (int(tokens[2]) - 1) * segment_width + start_idx
-        seg_end_idx = seg_start_idx + segment_width - 1
+        seg_end_idx = seg_start_idx + segment_width
         seg_colour = colours[tokens[3].lower()]
         self.led.fill(seg_colour.R, seg_colour.G, seg_colour.B, seg_start_idx, seg_end_idx)
         self.led.update()
