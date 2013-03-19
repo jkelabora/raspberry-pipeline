@@ -5,14 +5,28 @@ import re
 from lib.base_message_interface import BaseMessageInterface
 from sounds.player import Player
 
+all_segments = {}
+
 # these keys need to be case-sensitive matches of the jenkins build names
-jenkins_segments = {
+first_pipeline = {
     'Prepare' : 0,
     'Unit Tests' : 1,
     'Integration Tests' : 2,
     'Deploy Test' : 3,
-    'Deploy to QA' : 4
+    'Deploy to QA' : 4,
+    'Deploy to Production' : 5
 }
+
+# these keys need to be case-sensitive matches of the jenkins build names
+second_pipeline = {
+    'DT - Prepare' : 6,
+    'DT - Unit Test' : 7,
+    'DT - Deploy Test' : 8,
+    'DT - Deploy QA' : 9
+}
+
+all_segments.update(first_pipeline)
+all_segments.update(second_pipeline)
 
 # the keys here are from the snsnotify-plugin, the values need to match the base_message_interface colours
 jenkins_colours = {
@@ -37,13 +51,28 @@ class JenkinsMessageTranslator:
             self.base_message_interface.issue_all_off()
             return
 
-        color = self.jenkins_colour(directive)
-        segment_number = self.jenkins_segment(directive)
+        color = self.determine_colour(directive)
+        segment_number = self.determine_segment_number(directive)
+
         if segment_number == 0:
             self.base_message_interface.issue_start_build()
             if play_sound:
               self.sound_player.play_random_start_sound()
             return
+
+        if segment_number == 1:
+            self.base_message_interface.issue_update(['0','5','4',color,'blue','blue','blue','blue'])
+
+
+        if segment_number == 6:
+            self.base_message_interface.issue_start_second_build()
+            if play_sound:
+              self.sound_player.play_random_start_sound()
+            return
+
+        if segment_number == 7:
+            self.base_message_interface.issue_update(['0','3','4',color,'blue','blue'])
+
 
         if play_sound:
           if color == 'green':
@@ -51,16 +80,13 @@ class JenkinsMessageTranslator:
           elif color == 'red':
             self.sound_player.play_random_failure_sound()
 
-        if segment_number == 1:
-            self.base_message_interface.issue_update(['2','5','6','1.0',color,'blue','blue','blue','blue'])
-
-        tokens = ['2', '6', segment_number, '1.0', color]
+        tokens = ['0', '4', segment_number, color]
         self.base_message_interface.issue_update_segment(tokens)
 
-    def jenkins_colour(self, message):
+    def determine_colour(self, message):
         match = re.search(jenkins_regex, message)
         return jenkins_colours[match.group(1)]
 
-    def jenkins_segment(self, message):
+    def determine_segment_number(self, message):
         match = re.search(jenkins_regex, message)
-        return jenkins_segments[match.group(2)]
+        return all_segments[match.group(2)]
