@@ -35,7 +35,7 @@ def determine_pipeline(directive):
     build_name = re.search(jenkins_regex, directive).group(2)
     if re.match('^DT', build_name):
         return second_pipeline
-    else
+    else:
         return first_pipeline
 
 
