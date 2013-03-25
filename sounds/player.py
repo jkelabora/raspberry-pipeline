@@ -19,7 +19,7 @@ class Player:
         self.play_this_thing(self.randomly_choose_mp3_in_sub_directory("failure"))
 
     def play_this_thing(self, filename):
-        self.kill_off_any_currently_playing_sounds
+        self.kill_off_any_currently_playing_sounds()
         log.info("playing {0}...".format(filename))
         os.system("mpg321 {0} &".format(filename))
 
