@@ -104,12 +104,12 @@ class JenkinsMessageTranslator:
             return self.pipelines[0]
 
     def issue_directive(self, directive, play_sound=False):
-        pipeline = self.determine_pipeline(directive)
 
         if directive == 'all_off':
-            pipeline.issue_all_off()
+            self.pipelines[0].issue_all_off() # any pipeline will do
             return
 
+        pipeline = self.determine_pipeline(directive)
         segment_number = pipeline.determine_segment_number(directive)
 
         if segment_number == 0:
