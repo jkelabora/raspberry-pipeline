@@ -5,9 +5,6 @@ import re
 from lib.base_message_interface import BaseMessageInterface
 from sounds.player import Player
 import collections
-import logging
-
-log = logging.getLogger()
 
 base_animation_colours = [[0,0,250],[0,0,225],[0,0,200],[0,0,175],[0,0,150],[0,0,125],[0,0,100],[0,0,75],[0,0,50],[0,0,25],
     [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],
@@ -44,32 +41,33 @@ second_pipeline = {
         }
 }
 
+base_message_interface = BaseMessageInterface()
+
 class Pipeline:
     def __init__(self, detail, led_range):
-        self.base_message_interface = BaseMessageInterface()
         self.detail = detail
         self.led_range = led_range
 
     def issue_all_off(self):
-        self.base_message_interface.issue_all_off()
+        base_message_interface.issue_all_off()
 
     def issue_start_build(self):
         pipeline_length = self.detail['STAGE_WIDTH'] * (len(self.detail['STAGES'])-1) # exclude the Prepare stage
 
         for pixel in xrange(self.detail['OFFSET'], self.detail['OFFSET'] + pipeline_length):
             self.led_range.rotate(1)
-            self.base_message_interface.issue_start_build_step(pixel, base_animation_colours[self.led_range[0]][0],
+            base_message_interface.issue_start_build_step(pixel, base_animation_colours[self.led_range[0]][0],
                 base_animation_colours[self.led_range[0]][1], base_animation_colours[self.led_range[0]][2])
         self.led_range.rotate((len(self.led_range)-1))
 
     def issue_all_stages_update(self, colour):
         tokens = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH'], colour] # exclude the Prepare stage
         extras = ['blue'] * (len(self.detail['STAGES'])-2) # exclude the Prepare and first stages
-        self.base_message_interface.issue_update(tokens + extras)
+        base_message_interface.issue_update(tokens + extras)
 
     def issue_update_segment(self, segment_number, colour):
         tokens = [self.detail['OFFSET'], self.detail['STAGE_WIDTH'], segment_number, colour]
-        self.base_message_interface.issue_update_segment(tokens)
+        base_message_interface.issue_update_segment(tokens)
 
     def determine_segment_number(self, message):
         match = re.search(jenkins_regex, message)
@@ -101,10 +99,8 @@ class JenkinsMessageTranslator:
     def determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
         if re.match('^DT', build_name):
-            log.info("using 2nd pipeline")
             return self.pipelines[1]
         else:
-            log.info("using 1st pipeline")
             return self.pipelines[0]
 
     def issue_directive(self, directive, play_sound=False):
@@ -115,7 +111,6 @@ class JenkinsMessageTranslator:
 
         pipeline = self.determine_pipeline(directive)
         segment_number = pipeline.determine_segment_number(directive)
-        log.info("segment number: " + str(segment_number))
 
         if segment_number == 0:
             pipeline.issue_start_build()
