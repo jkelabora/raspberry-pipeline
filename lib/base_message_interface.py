@@ -36,32 +36,13 @@ colours = {
     'white' : Colour(255, 255, 255)
 }
 
-base_animation_colours = [[0,0,250],[0,0,225],[0,0,200],[0,0,175],[0,0,150],[0,0,125],[0,0,100],[0,0,75],[0,0,50],[0,0,25],
-    [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],
-    [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-
 class BaseMessageInterface:
 
     def __init__(self, default_led_count=32):
         self.led = Strand(default_led_count) # long-lived stateful LEDStrip instance
 
-        self.first_led_range = collections.deque(xrange(len(base_animation_colours[0:20])))
-        self.second_led_range = collections.deque(xrange(len(base_animation_colours[0:12])))
-
-    def issue_start_build(self, start=0, end=31, first_led_range=True): # <----- fix first_led_range reference!
-        if first_led_range:  # blah...
-            for x in xrange(start, end):
-                self.first_led_range.rotate(1)
-                self.led.set(x, base_animation_colours[self.first_led_range[0]][0],
-                    base_animation_colours[self.first_led_range[0]][1], base_animation_colours[self.first_led_range[0]][2])
-            self.first_led_range.rotate((len(self.first_led_range)-1))
-
-        else:
-            for x in xrange(start, end):
-                self.second_led_range.rotate(1)
-                self.led.set(x, base_animation_colours[self.second_led_range[0]][0],
-                    base_animation_colours[self.second_led_range[0]][1], base_animation_colours[self.second_led_range[0]][2])
-            self.second_led_range.rotate((len(self.second_led_range)-1))
+    def issue_start_build_step(self, pixel, r, g, b):
+        self.led.set(pixel, r, g, b)
 
     def issue_update_segment(self, tokens):
         start_idx = int(tokens[0])
