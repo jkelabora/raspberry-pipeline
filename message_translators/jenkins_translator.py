@@ -19,7 +19,7 @@ jenkins_colours = {
 first_pipeline = {
     'OFFSET' : 0,
     'STAGE_WIDTH' : 4,
-    'STAGES' : [ 'Prepare', 'Unit Tests', 'Integration Tests', 'Deploy Test', 'Deploy to QA', 'Deploy to Production' ]
+    'STAGES' : [ 'Prepare', 'unit-tests', 'Integration Tests', 'Deploy Test', 'Deploy to QA', 'Deploy to Production' ]
 }
 
 # the entries in STAGES need to be case-sensitive matches of the jenkins build names
