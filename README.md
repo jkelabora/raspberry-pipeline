@@ -43,6 +43,7 @@ $ sudo python setup.py install
 ```
 If you want to play sounds at all (mp3's only):
 ```
+$ sudo apt-get update
 $ sudo apt-get install alsa-utils
 $ sudo apt-get install mpg321
 ```
