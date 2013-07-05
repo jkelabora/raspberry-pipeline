@@ -4,6 +4,7 @@
 import re
 from lib.pipeline import Pipeline
 from sounds.player import Player
+import logging
 
 # pick out the required parts from the snsnotify-plugin messages
 jenkins_regex = r"Build ([A-Z]+): (.*) #"
@@ -57,8 +58,12 @@ class JenkinsMessageTranslator:
             self.pipelines[0].issue_all_off() # any pipeline will do
             return
 
-        pipeline = self.determine_pipeline(directive)
-        segment_number = self.determine_segment_number(pipeline, directive)
+        try:
+            pipeline = self.determine_pipeline(directive)
+            segment_number = self.determine_segment_number(pipeline, directive)
+        except:
+            logging.getLogger().error("problem determining pipeline and segment for directive: {0}".format(directive))
+            return
 
         if segment_number == 0:
             pipeline.issue_start_build()
