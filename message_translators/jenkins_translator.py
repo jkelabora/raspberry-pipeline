@@ -45,8 +45,11 @@ class JenkinsMessageTranslator:
 
     def determine_segment_number(self, pipeline, directive):
         match = re.search(jenkins_regex, directive)
+        if match is None:
+            return
+        if match.group(2) not in pipeline.detail['STAGES']:
+            return
         return pipeline.detail['STAGES'].index(match.group(2))
-
 
     def determine_colour(self, directive):
         match = re.search(jenkins_regex, directive)
@@ -58,11 +61,10 @@ class JenkinsMessageTranslator:
             self.pipelines[0].issue_all_off() # any pipeline will do
             return
 
-        try:
-            pipeline = self.determine_pipeline(directive)
-            segment_number = self.determine_segment_number(pipeline, directive)
-        except:
-            logging.getLogger().error("problem determining pipeline and segment for directive: {0}".format(directive))
+        pipeline = self.determine_pipeline(directive)
+        segment_number = self.determine_segment_number(pipeline, directive)
+        if segment_number is None:
+            logging.getLogger().error("problem determining segment for directive: {0}".format(directive))
             return
 
         if segment_number == 0:
