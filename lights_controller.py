@@ -21,21 +21,26 @@ def main():
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
 
-    current_directive = 'all_off'
+    directive_buffer = current_directive = 'all_off'
     play_sound = False
 
     while True:
         try:
-            translator.issue_directive(current_directive, play_sound)
+            translator.issue_directive(current_directive, play_sound) # can throw UnrecognisedDirective
             play_sound = False
 
             job = local_q.get_nowait() # this will normally throw Queue.Empty
 
             log.info('proceeding to process message passed to local queue..')
+            directive_buffer = current_directive
             current_directive = job
             play_sound = True
             local_q.task_done()
             PollSQSWorker(local_q).start() # old thread has terminated so start another one to poll sqs queue
+
+        except UnrecognisedDirective:
+            log.error('bad directive received.. reverting to buffered directive..')
+            current_directive = directive_buffer
 
         except Queue.Empty:
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd

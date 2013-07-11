@@ -6,6 +6,8 @@ from lib.pipeline import Pipeline
 from sounds.player import Player
 import logging
 
+class UnrecognisedDirective(Exception): pass
+
 # pick out the required parts from the snsnotify-plugin messages
 jenkins_regex = r"Build ([A-Z]+): (.*) #"
 
@@ -45,10 +47,9 @@ class JenkinsMessageTranslator:
 
     def determine_segment_number(self, pipeline, directive):
         match = re.search(jenkins_regex, directive)
-        if match is None:
-            return
-        if match.group(2) not in pipeline.detail['STAGES']:
-            return
+        if match is None or match.group(2) not in pipeline.detail['STAGES']:
+            logging.getLogger().error("problem determining segment for directive: {0}".format(directive))
+            raise UnrecognisedDirective
         return pipeline.detail['STAGES'].index(match.group(2))
 
     def determine_colour(self, directive):
@@ -63,9 +64,6 @@ class JenkinsMessageTranslator:
 
         pipeline = self.determine_pipeline(directive)
         segment_number = self.determine_segment_number(pipeline, directive)
-        if segment_number is None:
-            logging.getLogger().error("problem determining segment for directive: {0}".format(directive))
-            return
 
         if segment_number == 0:
             pipeline.issue_start_build()
