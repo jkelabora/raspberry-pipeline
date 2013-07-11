@@ -5,6 +5,7 @@ import os
 import Queue
 from time import sleep
 import logging
+import UnrecognisedDirective
 
 from queue_readers.aws_sqs import PollSQSWorker
 from message_translators.jenkins_translator import JenkinsMessageTranslator
