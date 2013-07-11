@@ -6,8 +6,6 @@ from lib.pipeline import Pipeline
 from sounds.player import Player
 import logging
 
-class UnrecognisedDirective(Exception): pass
-
 # pick out the required parts from the snsnotify-plugin messages
 jenkins_regex = r"Build ([A-Z]+): (.*) #"
 
