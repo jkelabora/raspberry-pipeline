@@ -37,6 +37,12 @@ class JenkinsMessageTranslator:
         self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline) ]
         self.sound_player = Player()
 
+    def current_state(self):
+        full_status = ''
+        for pipeline in self.pipelines:
+            full_status += pipeline.current_state()
+        return full_status
+
     def determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
         if re.match('^DT', build_name):
@@ -58,7 +64,8 @@ class JenkinsMessageTranslator:
     def issue_directive(self, directive, play_sound=False):
 
         if directive == 'all_off':
-            self.pipelines[0].issue_all_off() # any pipeline will do
+            for pipeline in self.pipelines:
+                pipeline.issue_all_off()
             return
 
         pipeline = self.determine_pipeline(directive)

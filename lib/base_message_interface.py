@@ -33,7 +33,8 @@ colours = {
     'red' : Colour(255, 0, 0),
     'green' : Colour(0, 255, 0),
     'blue' : Colour(0, 0, 255),
-    'white' : Colour(255, 255, 255)
+    'white' : Colour(255, 255, 255),
+    'off' : Colour(0, 0, 0)
 }
 
 class BaseMessageInterface:
@@ -64,6 +65,3 @@ class BaseMessageInterface:
             seg_end_idx = seg_start_idx + segment_width
             self.led.fill(seg_colour.R, seg_colour.G, seg_colour.B, seg_start_idx, seg_end_idx)
             self.led.update()
-
-    def issue_all_off(self):
-        self.led.fill(0,0,0)

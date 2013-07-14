@@ -14,12 +14,20 @@ class Pipeline:
     def __init__(self, detail):
         self.detail = detail
         self.led_range = collections.deque(xrange(self.full_length()))
+        self.state = ['off'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
+
+    def current_state(self):
+        #TODO: as_json
+        return self.state
 
     def full_length(self):
         return self.detail['STAGE_WIDTH'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
     def issue_all_off(self):
-        base_message_interface.issue_all_off()
+        meta = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH']] # exclude the Prepare stage
+        tokens = ['off'] * (len(self.detail['STAGES'])-1) # exclude the Prepare stage
+        base_message_interface.issue_update(meta + tokens)
+        self.state = tokens
 
     def issue_start_build(self):
         for pixel in xrange(self.detail['OFFSET'], self.detail['OFFSET'] + self.full_length()):
@@ -27,12 +35,15 @@ class Pipeline:
             base_message_interface.issue_start_build_step(pixel, base_animation_colours[self.led_range[0]][0],
                 base_animation_colours[self.led_range[0]][1], base_animation_colours[self.led_range[0]][2])
         self.led_range.rotate((len(self.led_range)-1))
+        self.state = ['start'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
     def issue_all_stages_update(self, colour):
         tokens = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH'], colour] # exclude the Prepare stage
         extras = ['blue'] * (len(self.detail['STAGES'])-2) # exclude the Prepare and first stages
         base_message_interface.issue_update(tokens + extras)
+        #TODO update self.state
 
     def issue_update_segment(self, segment_number, colour):
         tokens = [self.detail['OFFSET'], self.detail['STAGE_WIDTH'], segment_number, colour]
         base_message_interface.issue_update_segment(tokens)
+        #TODO update self.state
