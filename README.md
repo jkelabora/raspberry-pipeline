@@ -1,12 +1,11 @@
 # Raspberry-Pipeline
--
+
 Designed to provide full control over a LED-strip as a means of representing a build pipeline and responding to it's changes.
 
 An example in action: http://youtu.be/3Q9-lJn2KD8
 
-
-####Features
 -
+####Features
 * Fully decoupled from your CI system through queues
 * The Pi can run on your local network while CI and the queues can be AWS/SQS-based 
 * Full control over each LED - all colours, all brightness levels
@@ -17,8 +16,8 @@ An example in action: http://youtu.be/3Q9-lJn2KD8
 * Way **less hassle and cost** than some of the existing build lights.. The entire kit - including the Pi - should only be a bit over $100
 * No need for a cumbersome dedicated monitor and all that goes along with it
 
-####What do you need?
 -
+####What do you need?
 **Raspberry Pi (Type B)** running [Occidentalis v0.2](http://learn.adafruit.com/adafruit-raspberry-pi-educational-linux-distro/overview)
 
 Follow the wiring and hardware setup instructions detailed [here](http://learn.adafruit.com/light-painting-with-raspberry-pi/hardware).
