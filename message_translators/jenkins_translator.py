@@ -19,20 +19,20 @@ jenkins_colours = {
 
 # the entries in STAGES need to be case-sensitive matches of the jenkins build names
 first_pipeline = {
-    'OFFSET' : 4,
+    'OFFSET' : 0,
     'STAGE_WIDTH' : 2,
     'STAGES' : [ 'WF - Prepare', 'WF - Unit Tests', 'WF - Integration Tests', 'WF - Deploy Test', 'WF - Deploy to QA', 'WF - Deploy to Production' ]
 }
 
 # the entries in STAGES need to be case-sensitive matches of the jenkins build names
 second_pipeline = {
-    'OFFSET' : 14,
+    'OFFSET' : 10,
     'STAGE_WIDTH' : 2,
     'STAGES' : [ 'RM - Prepare', 'RM - Unit Tests', 'RM - Integration Tests', 'RM - Deploy Test', 'RM - Deploy to QA', 'RM - Deploy to Production' ]
 }
 
 third_pipeline = {
-    'OFFSET' : 24,
+    'OFFSET' : 20,
     'STAGE_WIDTH' : 2,
     'STAGES' : [ 'DT - Prepare', 'DT - Unit Tests', 'DT - Deploy Test', 'DT - Deploy to QA', 'DT - Deploy to Production' ]
 }
