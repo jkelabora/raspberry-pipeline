@@ -19,22 +19,28 @@ jenkins_colours = {
 
 # the entries in STAGES need to be case-sensitive matches of the jenkins build names
 first_pipeline = {
-    'OFFSET' : 0,
-    'STAGE_WIDTH' : 4,
-    'STAGES' : [ 'Prepare', 'unit-tests', 'Integration Tests', 'Deploy Test', 'Deploy to QA', 'Deploy to Production' ]
+    'OFFSET' : 4,
+    'STAGE_WIDTH' : 2,
+    'STAGES' : [ 'WF - Prepare', 'WF - Unit Tests', 'WF - Integration Tests', 'WF - Deploy Test', 'WF - Deploy to QA', 'WF - Deploy to Production' ]
 }
 
 # the entries in STAGES need to be case-sensitive matches of the jenkins build names
 second_pipeline = {
-    'OFFSET' : 20,
-    'STAGE_WIDTH' : 4,
-    'STAGES' : [ 'DT - Prepare', 'DT - Unit Test', 'DT - Deploy Test', 'DT - Deploy QA' ]
+    'OFFSET' : 14,
+    'STAGE_WIDTH' : 2,
+    'STAGES' : [ 'RM - Prepare', 'RM - Unit Tests', 'RM - Integration Tests', 'RM - Deploy Test', 'RM - Deploy to QA' 'RM - Deploy to Production' ]
+}
+
+third_pipeline = {
+    'OFFSET' : 24,
+    'STAGE_WIDTH' : 2,
+    'STAGES' : [ 'DT - Prepare', 'DT - Unit Tests', 'DT - Deploy Test', 'DT - Deploy to QA', 'DT - Deploy to Production' ]
 }
 
 class JenkinsMessageTranslator:
 
     def __init__(self):
-        self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline) ]
+        self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline), Pipeline(third_pipeline) ]
         self.sound_player = Player()
 
     def current_state(self):
@@ -45,10 +51,15 @@ class JenkinsMessageTranslator:
 
     def determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
-        if re.match('^DT', build_name):
-            return self.pipelines[1]
-        else:
+        if re.match('^WF', build_name):
             return self.pipelines[0]
+        elif re.match('^RM', build_name):
+            return self.pipelines[1]
+        elif re.match('^DT', build_name):
+            return self.pipelines[2]
+        else:
+            logging.getLogger().error("problem determining pipeline for directive: {0}".format(directive))
+            raise UnrecognisedDirective
 
     def determine_segment_number(self, pipeline, directive):
         match = re.search(jenkins_regex, directive)
