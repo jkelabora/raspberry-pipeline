@@ -28,7 +28,7 @@ first_pipeline = {
 second_pipeline = {
     'OFFSET' : 14,
     'STAGE_WIDTH' : 2,
-    'STAGES' : [ 'RM - Prepare', 'RM - Unit Tests', 'RM - Integration Tests', 'RM - Deploy Test', 'RM - Deploy to QA' 'RM - Deploy to Production' ]
+    'STAGES' : [ 'RM - Prepare', 'RM - Unit Tests', 'RM - Integration Tests', 'RM - Deploy Test', 'RM - Deploy to QA', 'RM - Deploy to Production' ]
 }
 
 third_pipeline = {
