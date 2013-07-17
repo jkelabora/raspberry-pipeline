@@ -77,6 +77,7 @@ class JenkinsMessageTranslator:
         if directive == 'all_off':
             for pipeline in self.pipelines:
                 pipeline.issue_all_off()
+            logging.getLogger().info("current state of pipeline(s): {0}".format(self.current_state()))
             return
 
         pipeline = self.determine_pipeline(directive)
@@ -86,6 +87,7 @@ class JenkinsMessageTranslator:
             pipeline.issue_start_build()
             if play_sound:
               self.sound_player.play_random_start_sound()
+            logging.getLogger().info("current state of pipeline(s): {0}".format(self.current_state()))
             return
 
         colour = self.determine_colour(directive)
@@ -97,6 +99,7 @@ class JenkinsMessageTranslator:
 
         if segment_number == 1:
             pipeline.issue_all_stages_update(colour)
+            logging.getLogger().info("current state of pipeline(s): {0}".format(self.current_state()))
             return
 
         pipeline.issue_update_segment(segment_number, colour)
