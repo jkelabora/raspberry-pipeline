@@ -43,12 +43,6 @@ class JenkinsMessageTranslator:
         self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline), Pipeline(third_pipeline) ]
         self.sound_player = Player()
 
-    def current_state(self):
-        full_status = ''
-        for pipeline in self.pipelines:
-            full_status += pipeline.current_state()
-        return full_status
-
     def determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
         if re.match('^WF', build_name):
@@ -71,6 +65,12 @@ class JenkinsMessageTranslator:
     def determine_colour(self, directive):
         match = re.search(jenkins_regex, directive)
         return jenkins_colours[match.group(1)]
+
+    def current_state(self):
+        full_status = []
+        for pipeline in self.pipelines:
+            full_status += pipeline.current_state()
+        return full_status
 
     def issue_directive(self, directive, play_sound=False):
 
@@ -100,3 +100,4 @@ class JenkinsMessageTranslator:
             return
 
         pipeline.issue_update_segment(segment_number, colour)
+        logging.getLogger().info("current state of pipeline(s): {0}".format(current_state()))
