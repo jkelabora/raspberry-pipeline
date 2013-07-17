@@ -100,4 +100,4 @@ class JenkinsMessageTranslator:
             return
 
         pipeline.issue_update_segment(segment_number, colour)
-        logging.getLogger().info("current state of pipeline(s): {0}".format(current_state()))
+        logging.getLogger().info("current state of pipeline(s): {0}".format(self.current_state()))
