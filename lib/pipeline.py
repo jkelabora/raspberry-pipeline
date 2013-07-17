@@ -13,15 +13,12 @@ class Pipeline:
 
     def __init__(self, detail):
         self.detail = detail
-        self.led_range = collections.deque(xrange(self.full_length()))
+        self.led_range = collections.deque(xrange(self.__full_length()))
         self.state = ['off'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
     def current_state(self):
         #TODO: as_json
         return self.state
-
-    def full_length(self):
-        return self.detail['STAGE_WIDTH'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
     def issue_all_off(self):
         meta = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH']] # exclude the Prepare stage
@@ -30,7 +27,7 @@ class Pipeline:
         self.state = tokens
 
     def issue_start_build(self):
-        for pixel in xrange(self.detail['OFFSET'], self.detail['OFFSET'] + self.full_length()):
+        for pixel in xrange(self.detail['OFFSET'], self.detail['OFFSET'] + self.__full_length()):
             self.led_range.rotate(1)
             base_message_interface.issue_start_build_step(pixel, base_animation_colours[self.led_range[0]][0],
                 base_animation_colours[self.led_range[0]][1], base_animation_colours[self.led_range[0]][2])
@@ -41,9 +38,13 @@ class Pipeline:
         tokens = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH'], colour] # exclude the Prepare stage
         extras = ['blue'] * (len(self.detail['STAGES'])-2) # exclude the Prepare and first stages
         base_message_interface.issue_update(tokens + extras)
-        #TODO update self.state
+        self.state = [colour] + extras
 
     def issue_update_segment(self, segment_number, colour):
         tokens = [self.detail['OFFSET'], self.detail['STAGE_WIDTH'], segment_number, colour]
         base_message_interface.issue_update_segment(tokens)
-        #TODO update self.state
+        self.state[segment_number -1] = colour
+
+    def __full_length(self):
+        return self.detail['STAGE_WIDTH'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
+
