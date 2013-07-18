@@ -8,6 +8,8 @@ import logging
 from unrecognised_directive_exception import UnrecognisedDirective
 
 from queue_readers.aws_sqs import PollSQSWorker
+from reporters.state_reporter import StateReporter
+
 from message_translators.jenkins_translator import JenkinsMessageTranslator
 
 logging.basicConfig(level=logging.INFO,
@@ -21,6 +23,8 @@ def main():
 
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
+
+    StateReporter(translator).start() # start the thread to report on pipline(s) state
 
     directive_buffer = current_directive = 'all_off'
     play_sound = False
