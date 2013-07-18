@@ -29,4 +29,4 @@ class StateReporter(threading.Thread):
           try:
             reporter_q.get_nowait()
           except Queue.Empty:
-            # no-op
+            pass
