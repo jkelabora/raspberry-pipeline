@@ -25,7 +25,7 @@ class StateReporter(threading.Thread):
         pass
 
       if report is not None:
-        logging.getLogger().info("latest status is: {0}".format(report.get_body()))
+        logging.getLogger().info("latest status is: {0}".format(report))
         # push info to os.environ['SOME_PLACE']
         # rest api post ?
 
