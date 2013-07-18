@@ -7,17 +7,26 @@ import os
 
 class StateReporter(threading.Thread):
 
-  def __init__(self, translator):
+  def __init__(self, reporter_q):
     threading.Thread.__init__(self) # required when extending threading.Thread
     self.daemon = True # so that this thread get killed when the main thread does
 
-    self.translator = translator
+    self.reporter_q = reporter_q
     logging.getLogger().info('new pipeline(s) state reporter thread started..')
 
   def run(self):
     while True:
-      sleep(2.0)
-      logging.getLogger().info("full state is '{0}'..".format(self.translator.current_state()))
+      sleep(5.0)
+      logging.getLogger().info("getting pipeline(s) status...")
+      job = self.reporter_q.read()
+      if job is not None:
+        logging.getLogger().info("latest status is: {0}".format(job.get_body()))
+        # push info to os.environ['SOME_PLACE']
+        # rest api post ?
 
-      # push info to os.environ['SOME_PLACE']
-      # rest api post ?
+        # delete all messages
+        while reporter_q.empty() is False:
+          try:
+            reporter_q.get_nowait()
+          except Queue.Empty:
+            # no-op

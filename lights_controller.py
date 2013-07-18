@@ -19,12 +19,13 @@ log = logging.getLogger()
 
 def main():
 
-    translator = JenkinsMessageTranslator() # switch this out with something else if need be
+    reporter_q = Queue.Queue()
+    StateReporter(reporter_q).start() # start the thread to report on pipline(s) state
+
+    translator = JenkinsMessageTranslator(reporter_q) # switch this out with something else if need be
 
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
-
-    StateReporter(translator).start() # start the thread to report on pipline(s) state
 
     directive_buffer = current_directive = 'all_off'
     play_sound = False

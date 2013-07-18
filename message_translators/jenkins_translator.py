@@ -39,9 +39,10 @@ third_pipeline = {
 
 class JenkinsMessageTranslator:
 
-    def __init__(self):
+    def __init__(self, reporter_q):
         self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline), Pipeline(third_pipeline) ]
         self.sound_player = Player()
+        self.reporter_q = reporter_q
 
     def determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
@@ -77,6 +78,7 @@ class JenkinsMessageTranslator:
         if directive == 'all_off':
             for pipeline in self.pipelines:
                 pipeline.issue_all_off()
+            self.reporter_q.put(self.current_state())
             return
 
         pipeline = self.determine_pipeline(directive)
@@ -86,6 +88,7 @@ class JenkinsMessageTranslator:
             pipeline.issue_start_build()
             if play_sound:
               self.sound_player.play_random_start_sound()
+            self.reporter_q.put(self.current_state())
             return
 
         colour = self.determine_colour(directive)
@@ -97,6 +100,8 @@ class JenkinsMessageTranslator:
 
         if segment_number == 1:
             pipeline.issue_all_stages_update(colour)
+            self.reporter_q.put(self.current_state())
             return
 
         pipeline.issue_update_segment(segment_number, colour)
+        self.reporter_q.put(self.current_state())
