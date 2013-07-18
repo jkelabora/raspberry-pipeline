@@ -18,9 +18,14 @@ class StateReporter(threading.Thread):
     while True:
       sleep(5.0)
       logging.getLogger().info("getting pipeline(s) status...")
-      job = self.reporter_q.read()
-      if job is not None:
-        logging.getLogger().info("latest status is: {0}".format(job.get_body()))
+
+      try:
+        report = reporter_q.get_nowait() # this will normally throw Queue.Empty
+        except Queue.Empty:
+          pass
+
+      if report is not None:
+        logging.getLogger().info("latest status is: {0}".format(report.get_body()))
         # push info to os.environ['SOME_PLACE']
         # rest api post ?
 
