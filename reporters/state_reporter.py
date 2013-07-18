@@ -20,7 +20,7 @@ class StateReporter(threading.Thread):
       logging.getLogger().info("getting pipeline(s) status...")
 
       try:
-        report = reporter_q.get_nowait() # this will normally throw Queue.Empty
+        report = self.reporter_q.get_nowait() # this will normally throw Queue.Empty
       except Queue.Empty:
         pass
 
@@ -30,8 +30,8 @@ class StateReporter(threading.Thread):
         # rest api post ?
 
         # delete all messages
-        while reporter_q.empty() is False:
+        while self.reporter_q.empty() is False:
           try:
-            reporter_q.get_nowait()
+            self.reporter_q.get_nowait()
           except Queue.Empty:
             pass
