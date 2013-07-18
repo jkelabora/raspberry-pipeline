@@ -44,7 +44,39 @@ class JenkinsMessageTranslator:
         self.sound_player = Player()
         self.reporter_q = reporter_q
 
-    def determine_pipeline(self, directive):
+    def issue_directive(self, directive, play_sound=False):
+        if directive == 'all_off':
+            for pipeline in self.pipelines:
+                pipeline.issue_all_off()
+            self.reporter_q.put(self.__current_state())
+            return
+
+        pipeline = self.__determine_pipeline(directive)
+        segment_number = self.__determine_segment_number(pipeline, directive)
+
+        if segment_number == 0:
+            pipeline.issue_start_build()
+            if play_sound:
+              self.sound_player.play_random_start_sound()
+            self.reporter_q.put(self.__current_state())
+            return
+
+        colour = self.__determine_colour(directive)
+        if play_sound:
+          if colour == 'green':
+            self.sound_player.play_random_success_sound()
+          elif colour == 'red':
+            self.sound_player.play_random_failure_sound()
+
+        if segment_number == 1:
+            pipeline.issue_all_stages_update(colour)
+            self.reporter_q.put(self.__current_state())
+            return
+
+        pipeline.issue_update_segment(segment_number, colour)
+        self.reporter_q.put(self.__current_state())
+
+    def __determine_pipeline(self, directive):
         build_name = re.search(jenkins_regex, directive).group(2)
         if re.match('^WF', build_name):
             return self.pipelines[0]
@@ -56,52 +88,19 @@ class JenkinsMessageTranslator:
             logging.getLogger().error("problem determining pipeline for directive: {0}".format(directive))
             raise UnrecognisedDirective
 
-    def determine_segment_number(self, pipeline, directive):
+    def __determine_segment_number(self, pipeline, directive):
         match = re.search(jenkins_regex, directive)
         if match is None or match.group(2) not in pipeline.detail['STAGES']:
             logging.getLogger().error("problem determining segment for directive: {0}".format(directive))
             raise UnrecognisedDirective
         return pipeline.detail['STAGES'].index(match.group(2))
 
-    def determine_colour(self, directive):
+    def __determine_colour(self, directive):
         match = re.search(jenkins_regex, directive)
         return jenkins_colours[match.group(1)]
 
-    def current_state(self):
+    def __current_state(self):
         full_status = []
         for pipeline in self.pipelines:
             full_status.append(pipeline.current_state())
         return full_status
-
-    def issue_directive(self, directive, play_sound=False):
-
-        if directive == 'all_off':
-            for pipeline in self.pipelines:
-                pipeline.issue_all_off()
-            self.reporter_q.put(self.current_state())
-            return
-
-        pipeline = self.determine_pipeline(directive)
-        segment_number = self.determine_segment_number(pipeline, directive)
-
-        if segment_number == 0:
-            pipeline.issue_start_build()
-            if play_sound:
-              self.sound_player.play_random_start_sound()
-            self.reporter_q.put(self.current_state())
-            return
-
-        colour = self.determine_colour(directive)
-        if play_sound:
-          if colour == 'green':
-            self.sound_player.play_random_success_sound()
-          elif colour == 'red':
-            self.sound_player.play_random_failure_sound()
-
-        if segment_number == 1:
-            pipeline.issue_all_stages_update(colour)
-            self.reporter_q.put(self.current_state())
-            return
-
-        pipeline.issue_update_segment(segment_number, colour)
-        self.reporter_q.put(self.current_state())
