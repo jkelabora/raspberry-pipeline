@@ -16,9 +16,8 @@ class StateReporter(threading.Thread):
 
   def run(self):
     while True:
-      sleep(5.0)
-      # logging.getLogger().info("full state is '{0}'..".format(self.translator.current_state()))
-      logging.getLogger().info("...")
+      sleep(2.0)
+      logging.getLogger().info("full state is '{0}'..".format(self.translator.current_state()))
 
       # push info to os.environ['SOME_PLACE']
       # rest api post ?

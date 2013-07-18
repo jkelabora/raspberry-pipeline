@@ -24,7 +24,7 @@ def main():
     local_q = Queue.Queue()
     PollSQSWorker(local_q).start() # start a thread to poll for messages on the sqs queue
 
-    StateReporter(translator).start() # start the thread to report on pipeline(s) state
+    StateReporter(translator).start() # start the thread to report on pipline(s) state
 
     directive_buffer = current_directive = 'all_off'
     play_sound = False
