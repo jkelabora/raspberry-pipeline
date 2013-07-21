@@ -103,4 +103,4 @@ class JenkinsMessageTranslator:
         for pipeline in self.pipelines:
             state_of_all_pipelines.update(pipeline.current_state())
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        return { "recorded_at" : now, "group" : "fm-systems", "pipelines" : state_of_all_pipelines }
+        return { "recorded_at" : now, "name" : "fm-systems", "pipelines" : state_of_all_pipelines }
