@@ -1,5 +1,6 @@
 import collections
 from lib.base_message_interface import BaseMessageInterface
+import re
 
 base_animation_colours = [[250,125,0],[225,112,0],[200,100,0],[175,87,0],[150,75,0],[125,65,0],[100,50,0],[75,37,0],[50,25,0],[25,12,0],
     [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],
@@ -16,8 +17,10 @@ class Pipeline:
         self.led_range = collections.deque(xrange(self.__full_length()))
         self.state = ['off'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
+    def matches(self, build_name):
+        return re.match('^' + self.detail['IDENTIFIER'], build_name):
+
     def current_state(self):
-        #TODO: as_json
         return self.state
 
     def issue_all_off(self):
