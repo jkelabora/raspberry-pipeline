@@ -5,6 +5,7 @@ import re
 from lib.pipeline import Pipeline
 from sounds.player import Player
 import logging
+from datetime import datetime
 from unrecognised_directive_exception import UnrecognisedDirective
 
 # pick out the required parts from the snsnotify-plugin messages
@@ -98,7 +99,8 @@ class JenkinsMessageTranslator:
         return jenkins_colours[match.group(1)]
 
     def __current_state(self):
-        full_status = []
+        state_of_all_pipelines = {}
         for pipeline in self.pipelines:
-            full_status.append(pipeline.current_state())
-        return full_status
+            state_of_all_pipelines.update(pipeline.current_state())
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return { "recorded_at" : now, "group" : "fm-systems", "pipelines" : state_of_all_pipelines }

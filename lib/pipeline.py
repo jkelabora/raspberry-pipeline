@@ -18,10 +18,10 @@ class Pipeline:
         self.state = ['off'] * (len(self.detail['STAGES']) -1) # excluding Prepare stage
 
     def matches(self, build_name):
-        return re.match('^' + self.detail['IDENTIFIER'], build_name):
+        return re.match('^' + self.detail['IDENTIFIER'], build_name)
 
     def current_state(self):
-        return self.state
+        return { self.detail['IDENTIFIER'] : self.state }
 
     def issue_all_off(self):
         meta = [self.detail['OFFSET'], (len(self.detail['STAGES'])-1), self.detail['STAGE_WIDTH']] # exclude the Prepare stage

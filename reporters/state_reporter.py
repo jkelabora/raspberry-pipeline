@@ -18,7 +18,7 @@ class StateReporter(threading.Thread):
 
   def run(self):
     while True:
-      sleep(5.0)
+      sleep(10.0)
       logging.getLogger().info("getting pipeline(s) status...")
 
       try:
@@ -27,7 +27,7 @@ class StateReporter(threading.Thread):
         pass
 
       if report is not None:
-        logging.getLogger().info("latest status is: {0}".format(report))
+        logging.getLogger().info("posting to {0} this status: {1} ".format(os.environ['REPORTING_ENDPOINT'], report))
 
         req = urllib2.Request(os.environ['REPORTING_ENDPOINT'])
         req.add_header('Content-Type', 'application/json')
