@@ -4,6 +4,8 @@ import threading
 import logging
 from time import sleep
 import os
+import urllib2
+import json
 
 class StateReporter(threading.Thread):
 
@@ -26,8 +28,10 @@ class StateReporter(threading.Thread):
 
       if report is not None:
         logging.getLogger().info("latest status is: {0}".format(report))
-        # push info to os.environ['SOME_PLACE']
-        # rest api post ?
+
+        req = urllib2.Request(os.environ['REPORTING_ENDPOINT'])
+        req.add_header('Content-Type', 'application/json')
+        response = urllib2.urlopen(req, json.dumps(report))
 
         # delete all messages
         while self.reporter_q.empty() is False:

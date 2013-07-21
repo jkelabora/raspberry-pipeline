@@ -7,6 +7,7 @@ export AWS_ACCESS_KEY_ID=[--INSERT--]
 export AWS_SECRET_ACCESS_KEY=[--INSERT--]
 export SQS_REGION=ap-southeast-2
 export SQS_QUEUE_NAME=raspberry-pipeline
+export REPORTING_ENDPOINT=[--INSERT--]
 
 case "$1" in
     start)
