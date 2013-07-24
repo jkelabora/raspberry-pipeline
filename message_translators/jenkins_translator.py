@@ -26,7 +26,6 @@ first_pipeline = {
     'STAGES' : [ 'WF - Prepare', 'WF - Unit Tests', 'WF - Integration Tests', 'WF - Deploy Test', 'WF - Deploy to QA', 'WF - Deploy to Production' ]
 }
 
-# the entries in STAGES need to be case-sensitive matches of the jenkins build names
 second_pipeline = {
     'IDENTIFIER' : 'RM',
     'OFFSET' : 10,
@@ -41,10 +40,17 @@ third_pipeline = {
     'STAGES' : [ 'DT - Prepare', 'DT - Unit Tests', 'DT - Deploy Test', 'DT - Deploy to QA', 'DT - Deploy to Production' ]
 }
 
+fourth_pipeline = {
+    'IDENTIFIER' : 'CL',
+    'OFFSET' : 28,
+    'STAGE_WIDTH' : 2,
+    'STAGES' : [ 'CL - Prepare', 'CL - Create Test Stack', 'CL - Destroy Test Stack' ]
+}
+
 class JenkinsMessageTranslator:
 
     def __init__(self, reporter_q):
-        self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline), Pipeline(third_pipeline) ]
+        self.pipelines = [ Pipeline(first_pipeline), Pipeline(second_pipeline), Pipeline(third_pipeline), Pipeline(fourth_pipeline) ]
         self.sound_player = Player()
         self.reporter_q = reporter_q
 
