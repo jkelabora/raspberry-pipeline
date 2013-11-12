@@ -1,0 +1,27 @@
+{ "pipelines" : [
+    {
+      "IDENTIFIER" : "WF",
+      "OFFSET" : 0,
+      "STAGE_WIDTH" : 2,
+      "STAGES" : [ "WF - Prepare", "WF - Unit Tests", "WF - Integration Tests", "WF - Deploy Test", "WF - Deploy to QA", "WF - Deploy to Production" ]
+    },
+    {
+      "IDENTIFIER" : "RM",
+      "OFFSET" : 10,
+      "STAGE_WIDTH" : 2,
+      "STAGES" : [ "RM - Prepare", "RM - Unit Tests", "RM - Integration Tests", "RM - Deploy Test", "RM - Deploy to QA", "RM - Deploy to Production" ]
+    },
+    {
+      "IDENTIFIER" : "DT",
+      "OFFSET" : 20,
+      "STAGE_WIDTH" : 2,
+      "STAGES" : [ "DT - Prepare", "DT - Unit Tests", "DT - Deploy Test", "DT - Deploy to QA", "DT - Deploy to Production" ]
+    },
+    {
+      "IDENTIFIER" : "CL",
+      "OFFSET" : 28,
+      "STAGE_WIDTH" : 2,
+      "STAGES" : [ "CL - Prepare", "CL - Create Test Stack", "CL - Destroy Test Stack" ]
+    }
+  ]
+}
