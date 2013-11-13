@@ -47,6 +47,7 @@ def main():
         except UnrecognisedDirective:
             log.error('bad directive received.. reverting to buffered directive..')
             current_directive = directive_buffer
+            play_sound = False
 
         except Queue.Empty:
             sleep(0.03) # loop fast enough for animations ---> this could be altered per directive if reqd
