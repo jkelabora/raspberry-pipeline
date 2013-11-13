@@ -2,26 +2,32 @@
     {
       "IDENTIFIER" : "WF",
       "OFFSET" : 0,
-      "STAGE_WIDTH" : 2,
-      "STAGES" : [ "WF - Prepare", "WF - Unit Tests", "WF - Integration Tests", "WF - Deploy Test", "WF - Deploy to QA", "WF - Deploy to Production" ]
+      "STAGE_WIDTH" : 1,
+      "STAGES" : [ "WF - Prepare", "WF - Unit Tests", "WF - Integration Tests", "WF - Deploy Test", "WF - Deploy to QA", "WF - Deploy to Production", "WF - Partial Prod Release", "WF - Full Prod Release" ]
     },
     {
       "IDENTIFIER" : "RM",
-      "OFFSET" : 10,
-      "STAGE_WIDTH" : 2,
-      "STAGES" : [ "RM - Prepare", "RM - Unit Tests", "RM - Integration Tests", "RM - Deploy Test", "RM - Deploy to QA", "RM - Deploy to Production" ]
+      "OFFSET" : 8,
+      "STAGE_WIDTH" : 1,
+      "STAGES" : [ "RM - Prepare", "RM - Unit Tests", "RM - Integration Tests", "RM - Deploy Test", "RM - Deploy to QA", "RM - Deploy to Production", "RM - Partial Prod Release", "RM - Full Prod Release" ]
     },
     {
       "IDENTIFIER" : "DT",
-      "OFFSET" : 20,
-      "STAGE_WIDTH" : 2,
-      "STAGES" : [ "DT - Prepare", "DT - Unit Tests", "DT - Deploy Test", "DT - Deploy to QA", "DT - Deploy to Production" ]
+      "OFFSET" : 16,
+      "STAGE_WIDTH" : 1,
+      "STAGES" : [ "DT - Prepare", "DT - Unit Tests", "DT - Deploy Test", "DT - Deploy to QA", "DT - Deploy to Production", "DT - Deploy to Production B" ]
+    },
+    {
+      "IDENTIFIER" : "IN",
+      "OFFSET" : 22,
+      "STAGE_WIDTH" : 1,
+      "STAGES" : [ "IN - Prepare", "IN - Unit Tests", "IN - Deploy Test", "IN - Deploy QA", "IN - Deploy to Production", "IN - Deploy to Production B" ]
     },
     {
       "IDENTIFIER" : "CL",
       "OFFSET" : 28,
-      "STAGE_WIDTH" : 2,
-      "STAGES" : [ "CL - Prepare", "CL - Create Test Stack", "CL - Destroy Test Stack" ]
+      "STAGE_WIDTH" : 1,
+      "STAGES" : [ "CL - Create Canary", "CL - Destroy Canary", "CL - Create QA", "CL - Destroy QA (Except RDS)" ]
     }
   ]
 }
