@@ -26,8 +26,8 @@ class JenkinsMessageTranslator:
 
     def __init__(self, reporter_q):
         self.pipelines = []
-        for pipeline in Config().pipelines():
-            self.pipelines += [pipeline]
+        for pipeline_config in Config().pipelines():
+            self.pipelines += [Pipeline(pipeline_config)]
         self.sound_player = Player()
         self.reporter_q = reporter_q
 
