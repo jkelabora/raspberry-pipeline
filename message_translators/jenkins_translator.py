@@ -41,7 +41,7 @@ class JenkinsMessageTranslator:
         pipeline = self.__determine_pipeline(directive)
         segment_number = self.__determine_segment_number(pipeline, directive)
 
-        if segment_number == 0:
+        if segment_number == 0 and re.match('.*Unit.*', directive):
             pipeline.issue_start_build()
             if play_sound:
               self.sound_player.play_random_start_sound()
