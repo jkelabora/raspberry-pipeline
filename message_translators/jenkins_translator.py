@@ -41,7 +41,7 @@ class JenkinsMessageTranslator:
         pipeline = self.__determine_pipeline(directive)
         segment_number = self.__determine_segment_number(pipeline, directive)
 
-        if segment_number == 0 and re.match('.*Unit.*', directive):
+        if segment_number == 0:
             pipeline.issue_start_build()
             if play_sound:
               self.sound_player.play_random_start_sound()
@@ -55,7 +55,7 @@ class JenkinsMessageTranslator:
           elif colour == 'red':
             self.sound_player.play_random_failure_sound()
 
-        if segment_number == 1:
+        if segment_number == 1 and re.match('.*Unit.*', directive):
             pipeline.issue_all_stages_update(colour)
             self.reporter_q.put(self.__current_state())
             return
