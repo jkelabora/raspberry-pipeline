@@ -3,29 +3,29 @@
       "IDENTIFIER" : "WF",
       "OFFSET" : 0,
       "STAGE_WIDTH" : 1,
-      "STAGES" : [ "WF - Prepare", "WF - Unit Tests", "WF - Integration Tests", "WF - Deploy Test", "WF - Deploy to QA", "WF - Deploy to Production", "WF - Partial Prod Release", "WF - Full Prod Release" ]
+      "STAGES" : [ "WF - Prepare", "WF - Unit Tests", "WF - Integration Tests", "WF - Deploy Test", "WF - Deploy to QA", "WF - Deploy to Production"]
     },
     {
       "IDENTIFIER" : "RM",
-      "OFFSET" : 7,
+      "OFFSET" : 5,
       "STAGE_WIDTH" : 1,
-      "STAGES" : [ "RM - Prepare", "RM - Unit Tests", "RM - Integration Tests", "RM - Deploy Test", "RM - Deploy to QA", "RM - Deploy to Production", "RM - Partial Prod Release", "RM - Full Prod Release" ]
+      "STAGES" : [ "RM - Prepare", "RM - Unit Tests", "RM - Integration Tests", "RM - Deploy Test", "RM - Deploy to QA", "RM - Deploy to Production"]
     },
     {
       "IDENTIFIER" : "DT",
-      "OFFSET" : 14,
+      "OFFSET" : 10,
       "STAGE_WIDTH" : 1,
       "STAGES" : [ "DT - Prepare", "DT - Unit Tests", "DT - Deploy Test", "DT - Deploy to QA", "DT - Deploy to Production", "DT - Deploy to Production B" ]
     },
     {
       "IDENTIFIER" : "IN",
-      "OFFSET" : 19,
+      "OFFSET" : 15,
       "STAGE_WIDTH" : 1,
-      "STAGES" : [ "IN - Prepare", "IN - Unit Tests", "IN - Deploy Test", "IN - Deploy QA", "IN - Deploy to Production", "IN - Deploy to Production B" ]
+      "STAGES" : [ "IN - Prepare", "IN - Unit Tests", "IN - Deploy Test", "IN - Deploy QA", "IN - Deploy to Production (blue)", "IN - Deploy to Production (green)" ]
     },
     {
       "IDENTIFIER" : "CL",
-      "OFFSET" : 24,
+      "OFFSET" : 20,
       "STAGE_WIDTH" : 1,
       "STAGES" : [ "CL - Prepare", "CL - Create Canary", "CL - Destroy Canary", "CL - Create QA", "CL - Destroy QA (Except RDS)" ]
     }
