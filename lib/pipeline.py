@@ -2,9 +2,10 @@ import collections
 from lib.base_message_interface import BaseMessageInterface
 import re
 
-base_animation_colours = [[250,125,0],[225,112,0],[200,100,0],[175,87,0],[150,75,0],[125,65,0],[100,50,0],[75,37,0],[50,25,0],[25,12,0],
-    [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],
-    [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+# determined using http://hexcolortool.com/
+base_animation_colours = [[255,127,255],[255,102,255],[255,77,255],[238,51,255],[213,26,255],[187,0,250],[162,0,225],[136,0,199],[111,0,174],[85,0,148],
+  [60,0,123],[35,0,98],[9,0,72],[0,0,47],[0,0,21],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],
+  [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
 
 # the underlying LEDStrip needs all updates issued to it across Pipline instances to come via
 # this single shared instance of BaseMessageInterface
