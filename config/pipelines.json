@@ -39,7 +39,7 @@
       "IDENTIFIER" : "CL",
       "OFFSET" : 29,
       "STAGE_WIDTH" : 1,
-      "STAGES" : [ "CL - Prepare", "CL - Create Canary", "CL - Destroy Canary", "CL - Create QA", "CL - Destroy QA (Except RDS)" ]
+      "STAGES" : [ "CL - Prepare", "CL - Create Canary", "CL - Create QA", "CL - Destroy QA (Except RDS)" ]
     }
   ]
 }
